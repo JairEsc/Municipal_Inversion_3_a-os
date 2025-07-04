@@ -1,0 +1,24 @@
+library(sf)
+municipios=read_sf("../../../Reutilizables/Cartografia/municipiosjair.shp")
+demos=read.csv("../../../Reutilizables/Demograficos/iter_13_cpv2020/conjunto_de_datos/conjunto_de_datos_iter_13CSV20.csv")
+demos=demos|> 
+  dplyr::select(MUN,NOM_MUN,LOC,POBTOT) |> 
+  dplyr::filter(MUN>0) |> 
+  dplyr::filter(LOC==0)|> 
+  dplyr::mutate(MUN=sprintf("%03d",MUN)) |> 
+  dplyr::select(-NOM_MUN)
+municipios=municipios |> 
+  dplyr::select(CVEGEO,NOM_MUN,CVE_MUN) 
+municipios=merge(municipios,demos,by.x='CVE_MUN',by.y='MUN',all.x=T)
+
+
+##Pre-proceso para calcular montos de inversión.
+#dummys
+municipios$inv_per_cap_dir=rnorm(84,mean = 150000,sd=5000)
+municipios$inv_per_cap_indir=rnorm(84,mean = 1500,sd=50)
+
+
+
+
+
+st_write(municipios,"geojson_hgo.geojson",driver = "geojson")

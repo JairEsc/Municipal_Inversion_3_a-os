@@ -1,0 +1,105 @@
+body {
+    font-family: Montserrat, sans-serif;
+    background-color: #ffffff;
+    margin: 0;
+    
+}
+#mapa_web_inversion {
+    height: 100vh; 
+    width: 50vw;
+
+  }
+#map_tablero_inversion_hidalgo {
+    height: 100vh; 
+    width: 50vw;
+  }
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 5vh;
+  }
+  
+  li {
+    float: left;
+    width: 14vw;
+    text-align: center;
+    
+    height: 5vh;
+    
+  }
+  
+  li a {
+    display: block;
+    color: white;
+    text-align: center;
+    background-color: #333;
+    text-decoration: none;
+    align-content: center;
+    height: 5vh;
+  }
+  
+  li a:hover {
+    background-color: rgba(157,36,73,0.8);
+  }
+  .nav_seguridad{
+  }
+  .mapa_web_inversion{}
+  .active_nav_seguridad{
+    background-color: rgb(157,36,73);
+  }
+  .leaflet-control-search .search-tooltip {
+    position: absolute !important;
+    bottom: 100% !important;
+    top: auto !important;
+    left: 0; 
+    z-index: 1000; 
+    max-width: 175px;
+    max-height: 73px;
+    font-size: large !important;
+}
+  .leaflet-control-search .search-tooltip h1 {
+    font-size: large !important;
+}
+.canva_de_chartjs{
+  position: relative;
+}
+.blabla::-webkit-scrollbar {
+  width: 8px;     /* Tamaño del scroll en vertical */
+  height: 8px;    /* Tamaño del scroll en horizontal */
+  display: none;  /* Ocultar scroll */
+}
+
+path.leaflet-interactive:focus {
+  outline: none;
+}
+
+.info_tablero_seg {
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background: rgb(255, 255, 255);
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 15px;
+  display: inline-block;
+}
+.info_tablero_seg h4 {
+  margin: 0 0 5px;
+  color: #777;
+
+  text-align: center;
+}
+.legend_seguridad{
+  max-width: 20vw;
+}
+.Titulos_graphs{
+  margin: 0;
+  font-weight: bolder;
+  font-size:large;
+}
+.fuente_inegi{
+  margin-left: 0vw;
+  font-size:x-small;
+}
+
+
