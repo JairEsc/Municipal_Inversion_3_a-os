@@ -33,7 +33,7 @@
                 <div id="contenedor_historico_titulo_select" style="width: 50vw;height: 2vh;display: flex;justify-content: center;">
                     
                     <p class="Titulos_graphs">Ejercicio Fiscal</p>
-                    <select style="display: block;margin-left: 0.5vw;height: 2vh;min-width: 8vw;max-width: 16vw;overflow-y: auto;" id="tipo_dropdown"  >
+                    <select style="display: block;margin-left: 0.5vw;height: 2vh;min-width: 8vw;max-width: 16vw;overflow-y: auto;" id="año_dropdown"  >
                         <option value="2025">2025</option>
                         <option value="2024">2024</option>
                         <option value="2023">2023</option>
@@ -51,7 +51,7 @@
             <div id="contenedor_barplot_horizontal" style="height: 40vh;width: 50vw;;background-color: rgb(255, 255, 255)">
                 <div id="contenedor_barplot_horizontal_titulo_select" style="width: 50vw;height: 2vh;display: flex;justify-content: center">
                     <p class="Titulos_graphs">Rubro: </p>
-                    <select style="position: relative;height: 2vh;margin-left: 0.5vw;display: block;" id="año_dropdown">
+                    <select style="position: relative;height: 2vh;margin-left: 0.5vw;display: block;" id="tipo_dropdown">
                         <option value="Espacios Públicos">Espacios Públicos</option>
                         
                     </select>
@@ -59,8 +59,7 @@
                 
                 <div id="scroll_de_barplot_tipos" class="blabla" style="width: 48vw;height: 38vh;overflow-y: scroll;overflow-x: hidden;">
                     <div id="contenedor_scroll_canvas" style="width: 50vw;height: 180vh;display: block">
-                        <canvas class="canva_de_chartjs" id="barplot_tipo_por_año_estatal" width="46vw" style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;display: block"></canvas>
-                        <canvas class="canva_de_chartjs"  id="barplot_tipo_por_año_municipal" width="46vw" style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;display:none"></canvas>
+                        <canvas class="canva_de_chartjs"  id="barplot_tipo_por_año_municipal" width="46vw" style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;display:block"></canvas>
                     </div>
                 </div>
 
@@ -78,6 +77,8 @@
             
                 
         </div>
+        <script src="script_tablero_inversion_municipal.js"></script>
+        <script src="script_actualizar_charts.js"></script>
 
 
     </div>
