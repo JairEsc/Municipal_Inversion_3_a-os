@@ -244,6 +244,17 @@ LargeCsvCargado.then(()=>{
   console.log(generate_values_Mun(0
     //,"Infraestructura Hídrica",'2024'
   ))
+  const rubrosDisponibles = getUniqueRubrosForMunicipio(municipio_actual);
+console.log("Posibles rubros para el municipios seleccionado: ",rubrosDisponibles)
+updateRubrosDropdown(rubrosDisponibles);//Opciones de segundo cuadrante
+//
+//console.log(generate_values_Reduce_Mun_num_obras_por_rubro_por_año(municipio_actual))
+//
+updateWorksSummary()//Primer cuadrante
+//
+updateWorksTable(document.getElementById('tipo_dropdown').value)//Se ejecuta con el primer valor disponible del nuevo dropdown
+//
+updateInvTable()
   //console.log(generate_values_Mun_Rubro_Año(0,"Infraestructura Hídrica",2024))
 })
 

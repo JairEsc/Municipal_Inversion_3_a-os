@@ -7,7 +7,8 @@
 //  Inversión per cápita directa
 //  Inversión per cápita indirecta
 
-municipio_actual=45
+municipio_actual=84
+setTimeout(()=>{},500)
 var map_h = L.map('map_tablero_inversion_hidalgo',{
     maxBoundsViscosity: 0.8
 });
@@ -17,11 +18,30 @@ map_h.createPane('municipioActual'); // Pane para el municipio seleccionado
 // Asignar prioridad: municipioActual estará arriba de municipios
 map_h.getPane('municipios').style.zIndex = 400;
 map_h.getPane('municipioActual').style.zIndex = 500;
+map_h.on('click', (e) => {
+    const clickedLatLng = e.latlng; // The LatLng object of the click
+    //Hay un stopPropagation dentro de la función del click. 
+    //Entonces estamos seguros de que este click ocurrirá solamente si el click fue fuera de algún feature.
+    municipio_actual=84
+    console.log("Clicked Latitude, Longitude:", clickedLatLng.lat, clickedLatLng.lng);
+    const rubrosDisponibles = getUniqueRubrosForMunicipio(municipio_actual);
+    console.log("Posibles rubros para el municipios seleccionado: ",rubrosDisponibles)
+    updateRubrosDropdown(rubrosDisponibles);//Opciones de segundo cuadrante
+    //
+    //console.log(generate_values_Reduce_Mun_num_obras_por_rubro_por_año(municipio_actual))
+    //
+    updateWorksSummary()//Primer cuadrante
+    //
+    updateWorksTable(document.getElementById('tipo_dropdown').value)//Se ejecuta con el primer valor disponible del nuevo dropdown
+    //
+    updateInvTable();
+    info.update('');
+    poligonos_map_h.resetStyle();
+});
 
 
 
-
-municipios=["Acatlán","Acaxochitlán","Actopan","Agua Blanca de Iturbide","Ajacuba","Alfajayucan","Almoloya","Apan","Atitalaquia","Atlapexco","Atotonilco de Tula","Atotonilco el Grande","Calnali","Cardonal","Chapantongo","Chapulhuacán","Chilcuautla","Cuautepec de Hinojosa","El Arenal","Eloxochitlán","Emiliano Zapata","Epazoyucan","Francisco I. Madero","Huasca de Ocampo","Huautla","Huazalingo","Huehuetla","Huejutla de Reyes","Huichapan","Ixmiquilpan","Jacala de Ledezma","Jaltocán","Juárez Hidalgo","La Misión","Lolotla","Metepec","Metztitlán","Mineral de la Reforma","Mineral del Chico","Mineral del Monte","Mixquiahuala de Juárez","Molango de Escamilla","Nicolás Flores","Nopala de Villagrán","Omitlán de Juárez","Pachuca de Soto","Pacula","Pisaflores","Progreso de Obregón","San Agustín Metzquititlán","San Agustín Tlaxiaca","San Bartolo Tutotepec","San Felipe Orizatlán","San Salvador","Santiago de Anaya","Santiago Tulantepec de Lugo Guerrero","Singuilucan","Tasquillo","Tecozautla","Tenango de Doria","Tepeapulco","Tepehuacán de Guerrero","Tepeji del Río de Ocampo","Tepetitlán","Tetepango","Tezontepec de Aldama","Tianguistengo","Tizayuca","Tlahuelilpan","Tlahuiltepa","Tlanalapa","Tlanchinol","Tlaxcoapan","Tolcayuca","Tula de Allende","Tulancingo de Bravo","Villa de Tezontepec","Xochiatipan","Xochicoatlán","Yahualica","Zacualtipán de Ángeles","Zapotlán de Juárez","Zempoala","Zimapán"]
+municipios=["Acatlán","Acaxochitlán","Actopan","Agua Blanca de Iturbide","Ajacuba","Alfajayucan","Almoloya","Apan","Atitalaquia","Atlapexco","Atotonilco de Tula","Atotonilco el Grande","Calnali","Cardonal","Chapantongo","Chapulhuacán","Chilcuautla","Cuautepec de Hinojosa","El Arenal","Eloxochitlán","Emiliano Zapata","Epazoyucan","Francisco I. Madero","Huasca de Ocampo","Huautla","Huazalingo","Huehuetla","Huejutla de Reyes","Huichapan","Ixmiquilpan","Jacala de Ledezma","Jaltocán","Juárez Hidalgo","La Misión","Lolotla","Metepec","Metztitlán","Mineral de la Reforma","Mineral del Chico","Mineral del Monte","Mixquiahuala de Juárez","Molango de Escamilla","Nicolás Flores","Nopala de Villagrán","Omitlán de Juárez","Pachuca de Soto","Pacula","Pisaflores","Progreso de Obregón","San Agustín Metzquititlán","San Agustín Tlaxiaca","San Bartolo Tutotepec","San Felipe Orizatlán","San Salvador","Santiago de Anaya","Santiago Tulantepec de Lugo Guerrero","Singuilucan","Tasquillo","Tecozautla","Tenango de Doria","Tepeapulco","Tepehuacán de Guerrero","Tepeji del Río de Ocampo","Tepetitlán","Tetepango","Tezontepec de Aldama","Tianguistengo","Tizayuca","Tlahuelilpan","Tlahuiltepa","Tlanalapa","Tlanchinol","Tlaxcoapan","Tolcayuca","Tula de Allende","Tulancingo de Bravo","Villa de Tezontepec","Xochiatipan","Xochicoatlán","Yahualica","Zacualtipán de Ángeles","Zapotlán de Juárez","Zempoala","Zimapán","Cobertura Estatal"]
 //municipios = municipios.map(m => m.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" "));
 
 getGradientColor = function(startColor, endColor, percent){
@@ -178,8 +198,6 @@ function highlightFeature(e) {
 function updateRubrosDropdown(rubros) {
   const tipoDropdown = document.getElementById('tipo_dropdown');
     $("#tipo_dropdown").empty();
-
-
   rubros.forEach((rubro) => {
     let option = document.createElement('option');
     option.value = rubro;
@@ -190,6 +208,7 @@ function updateRubrosDropdown(rubros) {
 function click_on_feature(e) {
     var layer = e.target;
     console.log(e.target.feature.properties.NOM_MUN)
+    L.DomEvent.stopPropagation(e);
     layer.bringToFront();
     municipio_actual=municipios.indexOf(e.target.feature.properties.NOM_MUN)
     //Forzar el cambio en cada grafica
@@ -258,7 +277,7 @@ info.onAdd = function (map_h) {
 
 // method that we will use to update the control based on feature properties passed
 info.update = function (props) {
-    this._div.innerHTML = '<h1 style="font-size:large">'+(props? (props.NOM_MUN+'<h4>'+'Municipio Seleccionado'+'</h4>' ): 'Selecciona un Municipio')+'</h1>'
+    this._div.innerHTML = '<h1 style="font-size:large;display:flex;justify-content:center">'+(props? (props.NOM_MUN+'<h4>'+'Municipio Seleccionado'+'</h4>' ): ('Selecciona un Municipio' +'<h4>'+'Se muestra información de Obras de Cobertura Estatal'+'</h4>')+'</h1>')
 };
 
 info.addTo(map_h);
@@ -321,3 +340,5 @@ L.control.watermark = function(opts) {
 }
 
 L.control.watermark({ position: 'bottomleft' }).addTo(map_h);
+
+
