@@ -17,8 +17,8 @@ body {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    overflow: hidden;
     height: 5vh;
+    display: block;
   }
   
   li {
@@ -68,7 +68,7 @@ body {
 .blabla::-webkit-scrollbar {
   width: 8px;     
   height: 8px;    
-  display: none;  
+  display: block;  
 }
 
 path.leaflet-interactive:focus {
@@ -110,7 +110,7 @@ path.leaflet-interactive:focus {
   overflow-y: auto;
   margin: 0;
   padding: 20px;
-  padding-bottom: 20vh;
+  padding-bottom: 2vh;
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -143,7 +143,7 @@ path.leaflet-interactive:focus {
 .scroll-container {
 width: 48vw; /* Ancho fijo como lo tenías */
 height: 38vh; /* Altura fija para el scroll */
-overflow-y: auto; /* Permite el scroll vertical */
+overflow-y:scroll; /* Permite el scroll vertical */
 /* overflow-x: hidden; Oculta el scroll horizontal */
 margin: 0;
 padding-top: 0;

@@ -256,5 +256,6 @@ updateWorksTable(document.getElementById('tipo_dropdown').value)//Se ejecuta con
 //
 updateInvTable()
   //console.log(generate_values_Mun_Rubro_Año(0,"Infraestructura Hídrica",2024))
+
 })
 

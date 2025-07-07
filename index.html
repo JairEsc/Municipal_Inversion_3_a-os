@@ -26,6 +26,8 @@
             <div id="map_tablero_inversion_hidalgo" class="mapa_web_inversion" style="float: right;display: block;">
                 <script src="Datos/geojson_hgo.js"></script>
                 <script>
+                    let myHistoricRubrosChart;
+
                     function updateWorksSummary() {
                         const worksData = generate_values_Reduce_Mun_num_obras_por_rubro_por_año(municipio_actual);
                         const worksSummaryElement = document.getElementById('worksSummary');
@@ -53,40 +55,106 @@
                                     htmlContent += `</div>`;
                                 }
                             });
-                            const historicRubroTotals = {};
-
-                            // Itera sobre cada año en tus datos
+                            const historicRubroTotalsByYear = {}; // To store counts for each rubro, per year
                             years.forEach(year => {
                                 const yearWorks = worksData[year];
-                                // Itera sobre cada rubro dentro de ese año
                                 for (const rubro in yearWorks) {
-                                    if (yearWorks.hasOwnProperty(rubro)) { // Asegúrate de que la propiedad es directa del objeto
-                                        const numWorks = yearWorks[rubro];
-                                        if (historicRubroTotals[rubro]) {
-                                            historicRubroTotals[rubro] += numWorks; // Suma al total existente
-                                        } else {
-                                            historicRubroTotals[rubro] = numWorks; // Inicializa si es la primera vez que se ve el rubro
+                                    if (yearWorks.hasOwnProperty(rubro)) {
+                                        if (!historicRubroTotalsByYear[rubro]) {
+                                            historicRubroTotalsByYear[rubro] = {};
                                         }
+                                        historicRubroTotalsByYear[rubro][year] = yearWorks[rubro];
                                     }
                                 }
                             });
+                            const allUniqueRubros = Object.keys(historicRubroTotalsByYear).sort();
+                            const colorPalette = [
+    'rgb(98,17,50)',    // Dark Red/Maroon
+    'rgb(212,193,156)', // Light Beige/Tan
+    'rgb(179,142,93)',  // Muted Orange/Brown
+    'rgb(157,36,73)',   // Deep Rose/Magenta
+    'rgb(112,114,114)', // Medium Grey
+    'rgb(29,29,27)'     // Near Black
+];
 
-                            // Ahora, agrega la sección "Histórico" al htmlContent
-                            const historicRubros = Object.keys(historicRubroTotals).sort(); // Opcional: ordenar los rubros históricos
+const datasets = years.reverse().map((year, index) => { // Added 'index' to the map callback
+    const dataForThisYear = allUniqueRubros.map(rubro => {
+        // Get the count for this rubro in this specific year, default to 0 if not present
+        return historicRubroTotalsByYear[rubro] && historicRubroTotalsByYear[rubro][year] ?
+            historicRubroTotalsByYear[rubro][year] : 0;
+    });
 
-                            if (historicRubros.length > 0) {
-                                htmlContent += `
-                                        <div class="year-section">
-                                            <div class="year-title">Histórico</div>
-                                            <div class="divider"></div>
-                                    `;
-                                historicRubros.forEach(rubro => {
-                                    const totalWorks = historicRubroTotals[rubro];
-                                    htmlContent += `<div class="work-item">${totalWorks} obras de ${rubro}</div>`;
-                                });
-                                htmlContent += `</div>`;
+    // Use the modulo operator (%) to cycle through the colorPalette
+    const backgroundColor = colorPalette[index % colorPalette.length];
+    
+    // For borderColor, you might want a slightly darker/lighter version of the backgroundColor
+    // or just use a solid color like black or white for contrast.
+    // For simplicity, let's keep it the same as background or a generic dark/light.
+    const borderColor = backgroundColor; // Or 'rgba(0,0,0,0.8)' or 'rgba(255,255,255,0.8)'
+
+    return {
+        label: `Año ${year}`,
+        data: dataForThisYear,
+        backgroundColor: backgroundColor, // Assign a single color for the whole dataset (year)
+        borderColor: borderColor,
+        borderWidth: 1
+    };
+});
+
+                            // --- Render the Chart ---
+                            const ctx = document.getElementById('lineplot_año_por_tipo_estatal').getContext('2d');
+
+                            // Destroy existing chart instance if it exists
+                            if (myHistoricRubrosChart) {
+                                myHistoricRubrosChart.destroy();
                             }
-                        }
+
+                            myHistoricRubrosChart = new Chart(ctx, {
+                                type: 'bar', // Bar chart type
+                                data: {
+                                    labels: allUniqueRubros, // Rubros on the X-axis
+                                    datasets: datasets
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false, // Allows you to control chart size with CSS
+                                    plugins: {
+                                        title: {
+                                            display: true,
+                                            text: 'Obras por Rubro y Año (Histórico)',
+                                            font: {
+                                                size: 18
+                                            }
+                                        },
+                                        tooltip: {
+                                            mode: 'index',
+                                            intersect: false
+                                        }
+                                    },
+                                    scales: {
+                                        x: {
+                                            stacked: true, // Crucial for stacking by year
+                                            title: {
+                                                display: true,
+                                                text: 'Rubro'
+                                            }
+                                        },
+                                        y: {
+                                            stacked: true, // Crucial for stacking by year
+                                            beginAtZero: true,
+                                            title: {
+                                                display: true,
+                                                text: 'Número de Obras'
+                                            },
+                                            ticks: {
+                                                        stepSize: 1
+
+                                            }
+                                        },
+                                    }
+                                }
+                            });
+                        } 
                         worksSummaryElement.innerHTML = htmlContent;
                     }
 
@@ -207,8 +275,8 @@
 
         </div>
         <div id="segunda_mitad" style="height: 100vh; width: 50vw;display: block;">
-            <div id="contenedor_historico" class="blabla"
-                style="width: 48vw;height: 30vh;overflow-y: scroll;;">
+            <div id="contenedor_historico" class=""
+                style="width: 48vw;height: 30vh;overflow-y: scroll;overflow-x: hidden;">
 
                 <div id="contenedor_historico_titulo_select"
                     style="width: 50vw;height: 2vh;display: flex;justify-content: center;padding-bottom: 1vh; background-color: lightgray;">
@@ -220,8 +288,8 @@
                     <div class="container" id="worksSummary">
                         <p class="no-data">Selecciona un municipio en el mapa para ver el resumen de obras.</p>
                     </div>
-                    <!-- <canvas class="canva_de_chartjs"  id="lineplot_año_por_tipo_estatal"  style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 40vh;display: block;"></canvas>
-                    <canvas class="canva_de_chartjs"  id="lineplot_año_por_tipo_municipal"  style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 40vh;display: none;"></canvas> -->
+                    <canvas class="canva_de_chartjs"  id="lineplot_año_por_tipo_estatal"  style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 40vh;display: block;"></canvas>
+                    <!-- <canvas class="canva_de_chartjs"  id="lineplot_año_por_tipo_municipal"  style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 40vh;display: none;"></canvas> -->
                 </div>
 
             </div>
@@ -238,8 +306,8 @@
                     </select>
                 </div>
 
-                <div id="scroll_de_barplot_tipos" class="blabla"
-                    style="width: 48vw;height: 38vh;overflow-y: scroll;overflow-x: hidden;">
+                <div id="scroll_de_barplot_tipos" class=""
+                    style="width: 48vw;height: 38vh;overflow-y: scroll;">
                     <table id="tabla_obras_municipal" class="works-table">
                         <thead>
                             <tr>
