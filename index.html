@@ -69,37 +69,37 @@
                             });
                             const allUniqueRubros = Object.keys(historicRubroTotalsByYear).sort();
                             const colorPalette = [
-    'rgb(98,17,50)',    // Dark Red/Maroon
-    'rgb(212,193,156)', // Light Beige/Tan
-    'rgb(179,142,93)',  // Muted Orange/Brown
-    'rgb(157,36,73)',   // Deep Rose/Magenta
-    'rgb(112,114,114)', // Medium Grey
-    'rgb(29,29,27)'     // Near Black
-];
+                                'rgb(98,17,50)',    // Dark Red/Maroon
+                                'rgb(212,193,156)', // Light Beige/Tan
+                                'rgb(179,142,93)',  // Muted Orange/Brown
+                                'rgb(157,36,73)',   // Deep Rose/Magenta
+                                'rgb(112,114,114)', // Medium Grey
+                                'rgb(29,29,27)'     // Near Black
+                            ];
 
-const datasets = years.reverse().map((year, index) => { // Added 'index' to the map callback
-    const dataForThisYear = allUniqueRubros.map(rubro => {
-        // Get the count for this rubro in this specific year, default to 0 if not present
-        return historicRubroTotalsByYear[rubro] && historicRubroTotalsByYear[rubro][year] ?
-            historicRubroTotalsByYear[rubro][year] : 0;
-    });
+                            const datasets = years.reverse().map((year, index) => { // Added 'index' to the map callback
+                                const dataForThisYear = allUniqueRubros.map(rubro => {
+                                    // Get the count for this rubro in this specific year, default to 0 if not present
+                                    return historicRubroTotalsByYear[rubro] && historicRubroTotalsByYear[rubro][year] ?
+                                        historicRubroTotalsByYear[rubro][year] : 0;
+                                });
 
-    // Use the modulo operator (%) to cycle through the colorPalette
-    const backgroundColor = colorPalette[index % colorPalette.length];
-    
-    // For borderColor, you might want a slightly darker/lighter version of the backgroundColor
-    // or just use a solid color like black or white for contrast.
-    // For simplicity, let's keep it the same as background or a generic dark/light.
-    const borderColor = backgroundColor; // Or 'rgba(0,0,0,0.8)' or 'rgba(255,255,255,0.8)'
+                                // Use the modulo operator (%) to cycle through the colorPalette
+                                const backgroundColor = colorPalette[index % colorPalette.length];
+                                
+                                // For borderColor, you might want a slightly darker/lighter version of the backgroundColor
+                                // or just use a solid color like black or white for contrast.
+                                // For simplicity, let's keep it the same as background or a generic dark/light.
+                                const borderColor = backgroundColor; // Or 'rgba(0,0,0,0.8)' or 'rgba(255,255,255,0.8)'
 
-    return {
-        label: `Año ${year}`,
-        data: dataForThisYear,
-        backgroundColor: backgroundColor, // Assign a single color for the whole dataset (year)
-        borderColor: borderColor,
-        borderWidth: 1
-    };
-});
+                                return {
+                                    label: `Año ${year}`,
+                                    data: dataForThisYear,
+                                    backgroundColor: backgroundColor, // Assign a single color for the whole dataset (year)
+                                    borderColor: borderColor,
+                                    borderWidth: 1
+                                };
+                            });
 
                             // --- Render the Chart ---
                             const ctx = document.getElementById('lineplot_año_por_tipo_estatal').getContext('2d');
@@ -285,10 +285,11 @@ const datasets = years.reverse().map((year, index) => { // Added 'index' to the 
 
                 </div>
                 <div id="contenedor_historico_canvas" style="height: 28vh;">
+                    <canvas class="canva_de_chartjs"  id="lineplot_año_por_tipo_estatal"  style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 40vh;display: block;"></canvas>
+
                     <div class="container" id="worksSummary">
                         <p class="no-data">Selecciona un municipio en el mapa para ver el resumen de obras.</p>
                     </div>
-                    <canvas class="canva_de_chartjs"  id="lineplot_año_por_tipo_estatal"  style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 40vh;display: block;"></canvas>
                     <!-- <canvas class="canva_de_chartjs"  id="lineplot_año_por_tipo_municipal"  style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 40vh;display: none;"></canvas> -->
                 </div>
 
