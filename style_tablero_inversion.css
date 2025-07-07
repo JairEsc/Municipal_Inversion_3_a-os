@@ -144,7 +144,7 @@ path.leaflet-interactive:focus {
 width: 48vw; /* Ancho fijo como lo tenías */
 height: 38vh; /* Altura fija para el scroll */
 overflow-y: auto; /* Permite el scroll vertical */
-overflow-x: hidden; /* Oculta el scroll horizontal */
+/* overflow-x: hidden; Oculta el scroll horizontal */
 margin: 0;
 padding-top: 0;
 border: 1px solid #e0e0e0;

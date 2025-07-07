@@ -224,17 +224,30 @@ function onEachFeature_h(feature, layer) {
     if (feature.properties.NOM_MUN == municipios[municipio_actual]) {
         layer.bringToFront();
     }
-    layer.bindTooltip('Municipio: '+feature.properties.NOM_MUN+'<br>'+
-        'Inv1: '+feature.properties.inv_per_cap_dir+'<br>'+
-        'Inv2: '+feature.properties.inv_per_cap_indir+'<br>'
+
+    // Get the raw investment value
+    // Ensure it's treated as a number. Use 0 if it's null/undefined or can't be parsed.
+    const rawInvestment = parseFloat(feature.properties.inv_per_cap_indir || 0);
+
+    // Format the investment value
+    // 'es-MX' is for Spanish (Mexico) locale, which uses comma for thousands separator and dot for decimals.
+    // 'minimumFractionDigits: 2' and 'maximumFractionDigits: 2' ensure exactly two decimal places.
+    const formattedInvestment = new Intl.NumberFormat('es-MX', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(rawInvestment);
+
+    layer.bindTooltip(
+        '<p>Municipio: ' + feature.properties.NOM_MUN + '<br>' +
+        'Inversión per cápita municipal: $ ' + formattedInvestment
     );
+
     layer.on({
         mouseover: highlightFeature,
         mouseout: resetHighlight_h,
         click: click_on_feature
     });
 }
-
 var info = L.control();
 
 info.onAdd = function (map_h) {
@@ -245,7 +258,7 @@ info.onAdd = function (map_h) {
 
 // method that we will use to update the control based on feature properties passed
 info.update = function (props) {
-    this._div.innerHTML = '<h1 style="font-size:large">'+(props? props.NOM_MUN: 'Pachuca de Soto')+'</h1>'+'<h4>'+'Municipio Seleccionado'+'</h4>' 
+    this._div.innerHTML = '<h1 style="font-size:large">'+(props? (props.NOM_MUN+'<h4>'+'Municipio Seleccionado'+'</h4>' ): 'Selecciona un Municipio')+'</h1>'
 };
 
 info.addTo(map_h);
