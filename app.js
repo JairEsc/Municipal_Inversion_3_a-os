@@ -238,7 +238,7 @@ function onEachFeature_h(feature, layer) {
     }).format(rawInvestment);
 
     layer.bindTooltip(
-        '<p>Municipio: ' + feature.properties.NOM_MUN + '<br>' +
+        'Municipio: ' + feature.properties.NOM_MUN + '<br>' +
         'Inversión per cápita municipal: $ ' + formattedInvestment
     );
 
