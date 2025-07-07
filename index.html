@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,82 +9,288 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""/>
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""></script>
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-search@2.3.7/dist/leaflet-search.src.css" />
     <script src="https://unpkg.com/leaflet-search@2.3.7/dist/leaflet-search.src.js"></script>
 
 
 </head>
+
 <body>
     <div id="contenedor_global" style="display: flex;">
-        <div id="primera_mitad" style="width: 50vw;height: 100vh;display: inline-block;background-color: rgba(112, 114, 114,0.9);">
+        <div id="primera_mitad"
+            style="width: 50vw;height: 100vh;display: inline-block;background-color: rgba(112, 114, 114,0.9);">
 
             <div id="map_tablero_inversion_hidalgo" class="mapa_web_inversion" style="float: right;display: block;">
                 <script src="Datos/geojson_hgo.js"></script>
+                <script>
+                    function updateWorksSummary() {
+                        const worksData = generate_values_Reduce_Mun_num_obras_por_rubro_por_año(municipio_actual);
+                        const worksSummaryElement = document.getElementById('worksSummary');
+                        let htmlContent = '';
+
+                        const years = Object.keys(worksData).sort((a, b) => b - a); // Ordenar años de mayor a menor
+
+                        if (years.length === 0) {
+                            htmlContent = '<p class="no-data">No hay obras registradas para este municipio.</p>';
+                        } else {
+                            years.forEach(year => {
+                                const yearWorks = worksData[year];
+                                const rubros = Object.keys(yearWorks);
+
+                                if (rubros.length > 0) { // Solo mostrar el año si tiene rubros con obras
+                                    htmlContent += `
+                                            <div class="year-section">
+                                                <div class="year-title">${year}</div>
+                                                <div class="divider"></div>
+                                        `;
+                                    rubros.forEach(rubro => {
+                                        const numWorks = yearWorks[rubro];
+                                        htmlContent += `<div class="work-item">${numWorks === 1 ? '1 obra ' : (numWorks + ' obras ')} de ${rubro}</div>`;
+                                    });
+                                    htmlContent += `</div>`;
+                                }
+                            });
+                            const historicRubroTotals = {};
+
+                            // Itera sobre cada año en tus datos
+                            years.forEach(year => {
+                                const yearWorks = worksData[year];
+                                // Itera sobre cada rubro dentro de ese año
+                                for (const rubro in yearWorks) {
+                                    if (yearWorks.hasOwnProperty(rubro)) { // Asegúrate de que la propiedad es directa del objeto
+                                        const numWorks = yearWorks[rubro];
+                                        if (historicRubroTotals[rubro]) {
+                                            historicRubroTotals[rubro] += numWorks; // Suma al total existente
+                                        } else {
+                                            historicRubroTotals[rubro] = numWorks; // Inicializa si es la primera vez que se ve el rubro
+                                        }
+                                    }
+                                }
+                            });
+
+                            // Ahora, agrega la sección "Histórico" al htmlContent
+                            const historicRubros = Object.keys(historicRubroTotals).sort(); // Opcional: ordenar los rubros históricos
+
+                            if (historicRubros.length > 0) {
+                                htmlContent += `
+                                        <div class="year-section">
+                                            <div class="year-title">Histórico</div>
+                                            <div class="divider"></div>
+                                    `;
+                                historicRubros.forEach(rubro => {
+                                    const totalWorks = historicRubroTotals[rubro];
+                                    htmlContent += `<div class="work-item">${totalWorks} obras de ${rubro}</div>`;
+                                });
+                                htmlContent += `</div>`;
+                            }
+                        }
+                        worksSummaryElement.innerHTML = htmlContent;
+                    }
+
+
+
+                </script>
+                <script>
+
+
+                    // Función para actualizar el contenido de la tabla basado en municipio_actual
+                    function updateWorksTable(rubro_sel) {
+                        const tableBody = document.querySelector('#tabla_obras_municipal tbody');
+                        const noDataMessage = document.getElementById('noDataMessage');
+                        const worksData = generate_values_Mun_Rubro(municipio_actual, rubro_sel);
+
+                        tableBody.innerHTML = ''; // Limpiar filas existentes
+
+                        if (worksData.length === 0) {
+                            noDataMessage.style.display = 'block'; // Mostrar mensaje de no datos
+                            document.getElementById('tabla_obras_municipal').style.display = 'none'; // Ocultar tabla
+                        } else {
+                            noDataMessage.style.display = 'none'; // Ocultar mensaje de no datos
+                            document.getElementById('tabla_obras_municipal').style.display = 'table'; // Mostrar tabla
+
+                            // Ordenar los datos por año de forma descendente
+                            const sortedWorks = worksData.sort((a, b) => {
+                                // 1. Comparar por Ejercicio (Año) de forma descendente
+                                // Si los años son diferentes, el orden se define por el año.
+                                if (b.Ejercicio !== a.Ejercicio) {
+                                    return b.Ejercicio - a.Ejercicio;
+                                }
+
+                                // 2. Si los Ejercicios son iguales, entonces comparar por Inversión de forma descendente
+                                // Asegúrate de que 'Inversión' es un número para la comparación
+                                const inversionA = parseFloat(a.Inversión || 0);
+                                const inversionB = parseFloat(b.Inversión || 0);
+                                return inversionB - inversionA;
+                            });////Arreglar el order. Primero año, luego inversión.
+
+                            sortedWorks.forEach(work => {
+                                const row = tableBody.insertRow();
+                                row.insertCell().textContent = work.Ejercicio;
+                                const formattedInvestment = new Intl.NumberFormat('es-MX', {
+                                    style: 'currency',
+                                    currency: 'MXN', // Or your desired currency code
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                }).format(work.Inversión);
+                                row.insertCell().textContent = formattedInvestment;
+                                row.insertCell().textContent = work['Habitantes beneficiados'] === 0 ? 'Sin dato' : work['Habitantes beneficiados'];
+                                const obraCell = row.insertCell();
+                                obraCell.textContent = work.Obra;
+                                obraCell.classList.add('obra-column'); // Añadir clase para estilos específicos
+                            });
+                        }
+                    }
+                    function updateInvTable() {
+                        const tableBody = document.querySelector('#tabla_inversion_municipal tbody');
+                        const noDataMessage = document.getElementById('noDataMessage2');
+                        // Assuming generate_resumen_inversion_por_año returns an object like { 2022: { obrasTotal: ..., inversionTotal: ... }, ... }
+                        const worksData = generate_resumen_inversion_por_año(municipio_actual);
+                        console.log(worksData); // This will show the object structure
+
+                        tableBody.innerHTML = ''; // Clear existing rows
+
+                        // Check if the worksData object is empty (no years with data)
+                        const years = Object.keys(worksData).sort((a, b) => b - a); 
+
+                        if (years.length === 0) {
+                            noDataMessage.style.display = 'block'; // Show no data message
+                            document.getElementById('tabla_inversion_municipal').style.display = 'none'; // Hide table
+                        } else {
+                            noDataMessage.style.display = 'none'; // Hide no data message
+                            document.getElementById('tabla_inversion_municipal').style.display = 'table'; // Show table
+
+                            let totalObrasHistorico = 0;
+                            let totalInversionHistorico = 0;
+
+                            years.forEach((year) => {
+                                const yearSummary = worksData[year];
+                                totalObrasHistorico += yearSummary.obrasTotal;
+                                totalInversionHistorico += yearSummary.inversionTotal;
+
+                                const row = tableBody.insertRow();
+                                row.insertCell().textContent = year;
+                                row.insertCell().textContent = yearSummary.obrasTotal;
+
+                                const formattedInvestment = new Intl.NumberFormat('es-MX', {
+                                    style: 'currency',
+                                    currency: 'MXN',
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                }).format(yearSummary.inversionTotal);
+                                row.insertCell().textContent = formattedInvestment;
+                            });
+
+                            // --- Añadir el renglón del total histórico ---
+                            const totalRow = tableBody.insertRow();
+                            totalRow.classList.add('total-row'); // Añadir clase para estilos específicos
+
+                            totalRow.insertCell().textContent = 'Histórico Total'; // Etiqueta para el total
+                            totalRow.insertCell().textContent = totalObrasHistorico; // Suma total de obras
+                            const formattedTotalInvestment = new Intl.NumberFormat('es-MX', {
+                                style: 'currency',
+                                currency: 'MXN',
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0
+                            }).format(totalInversionHistorico);
+                            totalRow.insertCell().textContent = formattedTotalInvestment; // Suma total de inversión
+                            // --- Fin del renglón del total histórico ---
+                        
+                        }
+                    }
+
+                </script>
                 <script src="app.js"></script>
             </div>
-            
+
         </div>
         <div id="segunda_mitad" style="height: 100vh; width: 50vw;display: block;">
-            <div id="contenedor_historico" style="height: 30vh;width: 50vw;background-color: rgb(255, 255, 255);display: block">
-                <div id="contenedor_historico_titulo_select" style="width: 50vw;height: 2vh;display: flex;justify-content: center;">
-                    
-                    <p class="Titulos_graphs">Ejercicio Fiscal</p>
-                    <select style="display: block;margin-left: 0.5vw;height: 2vh;min-width: 8vw;max-width: 16vw;overflow-y: auto;" id="año_dropdown"  >
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
-                    </select>
-                    
+            <div id="contenedor_historico" class="blabla"
+                style="width: 48vw;height: 30vh;overflow-y: scroll;overflow-x: hidden;">
+
+                <div id="contenedor_historico_titulo_select"
+                    style="width: 50vw;height: 2vh;display: flex;justify-content: center;padding-bottom: 1vh; background-color: lightgray;">
+
+                    <p class="Titulos_graphs" >Número de obras por ejercicio</p>
 
                 </div>
                 <div id="contenedor_historico_canvas" style="height: 28vh;">
-                    <canvas class="canva_de_chartjs"  id="lineplot_año_por_tipo_estatal"  style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 40vh;display: block;"></canvas>
-                    <canvas class="canva_de_chartjs"  id="lineplot_año_por_tipo_municipal"  style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 40vh;display: none;"></canvas>
+                    <div class="container" id="worksSummary">
+                        <p class="no-data">Selecciona un municipio en el mapa para ver el resumen de obras.</p>
+                    </div>
+                    <!-- <canvas class="canva_de_chartjs"  id="lineplot_año_por_tipo_estatal"  style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 40vh;display: block;"></canvas>
+                    <canvas class="canva_de_chartjs"  id="lineplot_año_por_tipo_municipal"  style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 40vh;display: none;"></canvas> -->
                 </div>
-                
+
             </div>
 
-            <div id="contenedor_barplot_horizontal" style="height: 40vh;width: 50vw;;background-color: rgb(255, 255, 255)">
-                <div id="contenedor_barplot_horizontal_titulo_select" style="width: 50vw;height: 2vh;display: flex;justify-content: center">
+            <div id="contenedor_barplot_horizontal"
+                style="height: 40vh;width: 50vw;;background-color: rgb(255, 255, 255)">
+                <div id="contenedor_barplot_horizontal_titulo_select"
+                    style="width: 50vw;height: 2vh;display: flex;justify-content: center;background-color: rgb(255, 255, 255);">
                     <p class="Titulos_graphs">Rubro: </p>
-                    <select style="position: relative;height: 2vh;margin-left: 0.5vw;display: block;" id="tipo_dropdown">
+                    <select style="position: relative;height: 2vh;margin-left: 0.5vw;display: block;"
+                        id="tipo_dropdown">
                         <option value="Espacios Públicos">Espacios Públicos</option>
-                        
+
                     </select>
                 </div>
-                
-                <div id="scroll_de_barplot_tipos" class="blabla" style="width: 48vw;height: 38vh;overflow-y: scroll;overflow-x: hidden;">
-                    <div id="contenedor_scroll_canvas" style="width: 50vw;height: 180vh;display: block">
-                        <canvas class="canva_de_chartjs"  id="barplot_tipo_por_año_municipal" width="46vw" style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;display:block"></canvas>
-                    </div>
+
+                <div id="scroll_de_barplot_tipos" class="blabla"
+                    style="width: 48vw;height: 38vh;overflow-y: scroll;overflow-x: hidden;">
+                    <table id="tabla_obras_municipal" class="works-table">
+                        <thead>
+                            <tr>
+                                <th>Año</th>
+                                <th>Inversión</th>
+                                <th>Beneficiarios</th>
+                                <th>Obra</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las filas de la tabla se insertarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                    <p class="no-data" id="noDataMessage" style="display: none;">No hay obras registradas para este
+                        municipio.</p>
                 </div>
 
-                
+
+
             </div>
-            <div id="contenedor_meses_titulo_canvas" style="height: 10vh;width: 50vw;display: block;">
+            <div id="contenedor_meses_titulo_canvas" class="blabla"
+                style="width: 48vw;height: 30vh;overflow-y: scroll;overflow-x: hidden;">
                 <div id="meses_titulo" style="width: 50vw;height: 2vh;display: block;">
-                    <p class="Titulos_graphs" style="text-align: center;">Inversión</p>
+                    <p class="Titulos_graphs" style="text-align: center;">Inversión Histórica</p>
                 </div>
-                <div id="contenedor_meses_canvas" style="height: 28vh;width: 50vw;background-color: rgb(255, 255, 255);">
-                    <canvas id="barplot_meses"  style="background-size: contain;background-repeat: no-repeat;background-position: center;margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 10vh;display: block;"></canvas>
-                    <canvas id="barplot_meses_mun" style="background-size: contain;background-repeat: no-repeat;background-position: center;margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 10vh;display: none;"></canvas>
-                </div>
+                <table id="tabla_inversion_municipal" class="works-table">
+                    <thead>
+                        <tr>
+                            <th>Año</th>
+                            <th>Obras</th>
+                            <th>Inversión</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Las filas de la tabla se insertarán aquí dinámicamente -->
+                    </tbody>
+                </table>
+                <p class="no-data" id="noDataMessage2" style="display: none;">No hay obras registradas para este
+                    municipio.</p>
             </div>
-            
-                
+
+
         </div>
         <script src="script_tablero_inversion_municipal.js"></script>
         <script src="script_actualizar_charts.js"></script>
 
 
     </div>
-    
-    
+
+
 
 </body>
+
 </html>

@@ -8,7 +8,6 @@
 //  Inversión per cápita indirecta
 
 municipio_actual=45
-let capa_actual='Inversión per cápita indirecta'
 var map_h = L.map('map_tablero_inversion_hidalgo',{
     maxBoundsViscosity: 0.8
 });
@@ -23,7 +22,7 @@ map_h.getPane('municipioActual').style.zIndex = 500;
 
 
 municipios=["Acatlán","Acaxochitlán","Actopan","Agua Blanca de Iturbide","Ajacuba","Alfajayucan","Almoloya","Apan","Atitalaquia","Atlapexco","Atotonilco de Tula","Atotonilco el Grande","Calnali","Cardonal","Chapantongo","Chapulhuacán","Chilcuautla","Cuautepec de Hinojosa","El Arenal","Eloxochitlán","Emiliano Zapata","Epazoyucan","Francisco I. Madero","Huasca de Ocampo","Huautla","Huazalingo","Huehuetla","Huejutla de Reyes","Huichapan","Ixmiquilpan","Jacala de Ledezma","Jaltocán","Juárez Hidalgo","La Misión","Lolotla","Metepec","Metztitlán","Mineral de la Reforma","Mineral del Chico","Mineral del Monte","Mixquiahuala de Juárez","Molango de Escamilla","Nicolás Flores","Nopala de Villagrán","Omitlán de Juárez","Pachuca de Soto","Pacula","Pisaflores","Progreso de Obregón","San Agustín Metzquititlán","San Agustín Tlaxiaca","San Bartolo Tutotepec","San Felipe Orizatlán","San Salvador","Santiago de Anaya","Santiago Tulantepec de Lugo Guerrero","Singuilucan","Tasquillo","Tecozautla","Tenango de Doria","Tepeapulco","Tepehuacán de Guerrero","Tepeji del Río de Ocampo","Tepetitlán","Tetepango","Tezontepec de Aldama","Tianguistengo","Tizayuca","Tlahuelilpan","Tlahuiltepa","Tlanalapa","Tlanchinol","Tlaxcoapan","Tolcayuca","Tula de Allende","Tulancingo de Bravo","Villa de Tezontepec","Xochiatipan","Xochicoatlán","Yahualica","Zacualtipán de Ángeles","Zapotlán de Juárez","Zempoala","Zimapán"]
-municipios = municipios.map(m => m.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" "));
+//municipios = municipios.map(m => m.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" "));
 
 getGradientColor = function(startColor, endColor, percent){
     // strip the leading # if it's there
@@ -108,60 +107,60 @@ function style_ent_h(feature) {
         pane: feature.properties.NOM_MUN == municipios[municipio_actual] ? 'municipioActual' : 'municipios'
     };
 }
-function style_ent_h2(feature) {
-    // Obtener todos los valores de inv_per_cap_indir para calcular el ranking
-    const values = hidalgo.features.map(f => parseFloat(f.properties.inv_per_cap_dir));
-    const currentValue = parseFloat(feature.properties.inv_per_cap_dir);
+// function style_ent_h2(feature) {
+//     // Obtener todos los valores de inv_per_cap_indir para calcular el ranking
+//     const values = hidalgo.features.map(f => parseFloat(f.properties.inv_per_cap_dir));
+//     const currentValue = parseFloat(feature.properties.inv_per_cap_dir);
 
-    // Ordenar los valores de menor a mayor y obtener el ranking (posición)
-    const sorted = [...values].sort((a, b) => a - b);
-    const rank = sorted.indexOf(currentValue);
-    const percent = sorted.length > 1 ? rank / (sorted.length - 1) : 0;
+//     // Ordenar los valores de menor a mayor y obtener el ranking (posición)
+//     const sorted = [...values].sort((a, b) => a - b);
+//     const rank = sorted.indexOf(currentValue);
+//     const percent = sorted.length > 1 ? rank / (sorted.length - 1) : 0;
 
-    return {
-        fillColor: getColor_h(percent),
-        opacity: 1,
-        color: feature.properties.NOM_MUN == municipios[municipio_actual] ? "#667" : 'white',
-        dashArray: feature.properties.NOM_MUN == municipios[municipio_actual] ? '0' : '5',
-        fillOpacity: 0.4,
-        pane: feature.properties.NOM_MUN == municipios[municipio_actual] ? 'municipioActual' : 'municipios'
-    };
-}
+//     return {
+//         fillColor: getColor_h(percent),
+//         opacity: 1,
+//         color: feature.properties.NOM_MUN == municipios[municipio_actual] ? "#667" : 'white',
+//         dashArray: feature.properties.NOM_MUN == municipios[municipio_actual] ? '0' : '5',
+//         fillOpacity: 0.4,
+//         pane: feature.properties.NOM_MUN == municipios[municipio_actual] ? 'municipioActual' : 'municipios'
+//     };
+// }
 // Crear los dos grupos de capas
-var grupo_dir = L.layerGroup();
-var grupo_indir = L.layerGroup();
+// var grupo_dir = L.layerGroup();
+// var grupo_indir = L.layerGroup();
 
 // Capa de Inversión per Cápita Directa
-poligonos_map_h2 = L.geoJson(hidalgo, {
-    style: style_ent_h2,
-    onEachFeature: onEachFeature_h,
-}).addTo(grupo_dir);
+// poligonos_map_h2 = L.geoJson(hidalgo, {
+//     style: style_ent_h2,
+//     onEachFeature: onEachFeature_h,
+// }).addTo(grupo_dir);
 
 // Capa de Inversión per Cápita Indirecta
-poligonos_map_h = L.geoJson(hidalgo, {
+var poligonos_map_h = L.geoJson(hidalgo, {
     style: style_ent_h,
     onEachFeature: onEachFeature_h,
-}).addTo(grupo_indir);
+}).addTo(map_h);
 
 // Añadir ambos grupos al mapa, pero solo mostrar uno por defecto
-grupo_indir.addTo(map_h);
+// grupo_indir.addTo(map_h);
 
-// Crear el control de capas
-var baseLayers = {
-    "Inversión per Cápita Directa": grupo_dir,
-    "Inversión per cápita indirecta": grupo_indir
-};
-let firstBaseLayerChange = true;
-map_h.on('baselayerchange', function(e) {
-    if (firstBaseLayerChange) {
-        firstBaseLayerChange = false;
-        return;
-    }
-    capa_actual = e.name;
-    console.log(capa_actual);
-    document.getElementsByClassName('info_tablero_seg legend legend_seguridad')[0].children[0].innerText=e.name;
-});
-L.control.layers(baseLayers, null, {collapsed: false}).addTo(map_h);
+// // Crear el control de capas
+// var baseLayers = {
+//     "Inversión per Cápita Directa": grupo_dir,
+//     "Inversión per cápita indirecta": grupo_indir
+// };
+// let firstBaseLayerChange = true;
+// map_h.on('baselayerchange', function(e) {
+//     if (firstBaseLayerChange) {
+//         firstBaseLayerChange = false;
+//         return;
+//     }
+//     capa_actual = e.name;
+//     console.log(capa_actual);
+//     document.getElementsByClassName('info_tablero_seg legend legend_seguridad')[0].children[0].innerText=e.name;
+// });
+// L.control.layers(baseLayers, null, {collapsed: false}).addTo(map_h);
 
 map_h.fitBounds(poligonos_map_h.getBounds());
 var ultimo_seleccionado='Hidalgo'
@@ -202,17 +201,24 @@ function click_on_feature(e) {
     //
     const rubrosDisponibles = getUniqueRubrosForMunicipio(municipio_actual);
     console.log("Posibles rubros para el municipios seleccionado: ",rubrosDisponibles)
-    updateRubrosDropdown(rubrosDisponibles);
+    updateRubrosDropdown(rubrosDisponibles);//Opciones de segundo cuadrante
     //
+    //console.log(generate_values_Reduce_Mun_num_obras_por_rubro_por_año(municipio_actual))
+    //
+    updateWorksSummary()//Primer cuadrante
+    //
+    updateWorksTable(document.getElementById('tipo_dropdown').value)//Se ejecuta con el primer valor disponible del nuevo dropdown
+    //
+    updateInvTable()
     poligonos_map_h.resetStyle();
-    poligonos_map_h2.resetStyle();
+    // poligonos_map_h2.resetStyle();
 
     info.update(layer.feature.properties);
 }
 
 function resetHighlight_h(e) {
     poligonos_map_h.resetStyle();
-    poligonos_map_h2.resetStyle();
+    // poligonos_map_h2.resetStyle();
 }
 function onEachFeature_h(feature, layer) {
     if (feature.properties.NOM_MUN == municipios[municipio_actual]) {
@@ -222,13 +228,11 @@ function onEachFeature_h(feature, layer) {
         'Inv1: '+feature.properties.inv_per_cap_dir+'<br>'+
         'Inv2: '+feature.properties.inv_per_cap_indir+'<br>'
     );
-
     layer.on({
         mouseover: highlightFeature,
         mouseout: resetHighlight_h,
         click: click_on_feature
     });
-    
 }
 
 var info = L.control();
@@ -271,7 +275,7 @@ legend_h.onAdd = function (map) {
 
     // Agregar el título y el gradiente
     div.innerHTML =
-    '<strong>' + capa_actual + '</strong><br>'+
+    '<strong>' + 'Inversión per cápita municipal' + '</strong><br>'+
     '<div style="height: 10px; background: ' + gradient + ';"></div>';
 
     // Agregar los valores de referencia debajo del gradiente

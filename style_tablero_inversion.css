@@ -103,3 +103,118 @@ path.leaflet-interactive:focus {
 }
 
 
+.container {
+  max-width: 50vw;
+  width: 50vw;
+  height: 40vh;
+  overflow-y: auto;
+  margin: 0;
+  padding: 20px;
+  padding-bottom: 20vh;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  z-index: -10;
+}
+.year-section {
+  margin-bottom: 20px;
+}
+.year-title {
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.divider {
+  border-top: 2px solid rgb(98,17,51);
+  margin: 10px 0;
+}
+.work-item {
+  margin-bottom: 5px;
+  text-align: center;
+  padding-left: 20px; /* Indentación para las obras */
+}
+.no-data {
+  text-align: center;
+  color: #888;
+}
+
+
+.scroll-container {
+width: 48vw; /* Ancho fijo como lo tenías */
+height: 38vh; /* Altura fija para el scroll */
+overflow-y: auto; /* Permite el scroll vertical */
+overflow-x: hidden; /* Oculta el scroll horizontal */
+margin: 0;
+padding-top: 0;
+border: 1px solid #e0e0e0;
+border-radius: 12px; /* Esquinas más redondeadas */
+box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Sombra más pronunciada */
+background-color: #ffffff; /* Fondo blanco para el contenedor */
+box-sizing: border-box; /* Incluye padding y borde en el width/height */
+padding-bottom: 70px; /* Espacio extra al final del scroll */
+}
+
+/* Estilos generales de la tabla */
+.works-table {
+width: 100%; /* La tabla ocupa todo el ancho del contenedor */
+border-collapse: collapse; /* Bordes de celdas colapsados */
+margin-top: 10px; /* Pequeño margen superior */
+}
+
+/* Estilos para las cabeceras de la tabla */
+.works-table th {
+background-color: rgba(212,193,156,1); /* Color de cabecera que combina con tu divisor */
+color: white;
+padding: 12px 15px;
+text-align: left;
+font-weight: bold;
+position: sticky; /* Cabeceras pegajosas al hacer scroll */
+top: 0; /* Se quedan en la parte superior del scroll-container */
+z-index: 10; /* Asegura que estén por encima del contenido */
+border-bottom: 2px solid rgba(179,142,93,1); /* Borde inferior para las cabeceras */
+border-top: 2px solid rgba(179,142,93,1); /* Borde inferior para las cabeceras */
+}
+#tabla_inversion_municipal  th {
+background-color: rgba(98, 17, 50,0.7); /* Color de cabecera que combina con tu divisor */
+color: white;
+padding: 12px 15px;
+text-align: left;
+font-weight: bold;
+position: sticky; /* Cabeceras pegajosas al hacer scroll */
+top: 0; /* Se quedan en la parte superior del scroll-container */
+z-index: 10; /* Asegura que estén por encima del contenido */
+border-bottom: 2px solid rgba(179,142,93,1); /* Borde inferior para las cabeceras */
+border-top: 2px solid rgba(179,142,93,1); /* Borde inferior para las cabeceras */
+}
+
+/* Estilos para las celdas de la tabla */
+.works-table td {
+padding: 10px 15px;
+border-bottom: 1px solid #f0f0f0; /* Línea divisoria suave entre filas */
+vertical-align: top; /* Alinea el texto en la parte superior de la celda */
+}
+
+/* Estilos para filas pares (para efecto de cebra) */
+.works-table tbody tr:nth-child(even) {
+background-color: #f9f9f9; /* Color más claro para filas pares */
+}
+
+/* Estilos para filas al pasar el ratón */
+.works-table tbody tr:hover {
+background-color: #e8e8e8; /* Resaltar fila al pasar el ratón */
+transition: background-color 0.3s ease;
+}
+
+/* Estilo específico para la columna 'Obra' para manejar texto largo */
+.works-table .obra-column {
+max-width: 20vw; /* Limita el ancho de la columna de obra */
+word-wrap: break-word; /* Permite que el texto se rompa y se ajuste */
+overflow-wrap: break-word; /* Otra propiedad para asegurar el ajuste */
+}
+
+.no-data {
+text-align: center;
+color: #888;
+padding: 20px;
+}

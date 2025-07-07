@@ -6,7 +6,7 @@
 let data_municipal_fetched_and_splitted = []; // Variable global para almacenar los datos procesados
 
 let LargeCsvCargado = new Promise((resolve, reject) => {
-  fetch("Datos/SIPDUS_INVERSIÓN GLOBAL_Mun_Homologados.csv")
+  fetch("Datos/SIPDUS_2022-2025.csv")
     .then((response) => {
       return response.text();
     })
@@ -16,7 +16,7 @@ let LargeCsvCargado = new Promise((resolve, reject) => {
       //console.log(headers)
       // Define los campos que te interesan y su orden
       const desiredHeaders = [
-        "Municipio_Original",
+        "NOM_MUN",
         "Rubro",
         "Ejercicio",
         "Obra",
@@ -82,43 +82,123 @@ generate_values_Mun = function (municipio_sel) {
       return(row.NOM_MUN==municipios[municipio_sel])
     })
 };
+generate_values_Reduce_Mun_num_obras_por_rubro_por_año = function (municipio_sel) {
+  // Aseguramos que los datos estén cargados
+  if (!data_municipal_fetched_and_splitted) {
+    return {}; // Retornar un objeto vacío si no hay datos
+  }
+
+  // 1. Obtenemos los rubros únicos para el municipio seleccionado (no los necesitamos para mapear índices en este caso)
+  // getUniqueRubrosForMunicipio(municipio_sel); // No es estrictamente necesario para la estructura final
+
+  // 2. Inicializamos la estructura para almacenar los conteos por año
+  // Cada año tendrá un objeto vacío que contendrá los rubros y sus conteos
+  const countsByYear = {
+    2022: {},
+    2023: {},
+    2024: {},
+    2025: {}
+  };
+
+  // Filtramos los datos por el municipio seleccionado
+  const selectedMunicipioName = municipios[municipio_sel];
+  const filteredDataForMunicipio = data_municipal_fetched_and_splitted.filter(row => {
+    return row.NOM_MUN === selectedMunicipioName;
+  });
+
+  // 3. Iteramos sobre los datos filtrados para contar los renglones por rubro y año
+  filteredDataForMunicipio.forEach(item => {
+    const año_curr = item.Ejercicio;
+    const rubro_curr = item.Rubro;
+
+    // Aseguramos que el año esté en nuestro rango y que el rubro exista
+    if (countsByYear[año_curr] && rubro_curr) {
+      if (!countsByYear[año_curr][rubro_curr]) {
+        countsByYear[año_curr][rubro_curr] = 0; // Inicializar si es la primera vez que vemos este rubro para este año
+      }
+      countsByYear[año_curr][rubro_curr]++;
+    }
+  });
+
+  // 4. Procesamos el objeto para asegurar que solo se incluyan rubros con conteo > 0
+  const finalResult = {};
+  for (let year = 2022; year <= 2025; year++) {
+    const rubrosForYear = countsByYear[year];
+    const filteredRubros = {};
+    for (const rubro in rubrosForYear) {
+      if (rubrosForYear[rubro] > 0) {
+        filteredRubros[rubro] = rubrosForYear[rubro];
+      }
+    }
+    finalResult[year] = filteredRubros;
+  }
+
+  return finalResult;
+};
+
+// Tu función auxiliar ya definida
+function getUniqueRubrosForMunicipio(municipio_sel) {
+  const selectedMunicipioName = municipios[municipio_sel];
+  const filteredData = data_municipal_fetched_and_splitted.filter((row) => {
+    return row.NOM_MUN === selectedMunicipioName;
+  });
+  const uniqueRubros = new Set();
+  filteredData.forEach((row) => {
+    if (row.Rubro) { // Aseguramos que el Rubro no sea nulo o indefinido
+      uniqueRubros.add(row.Rubro);
+    }
+  });
+  return Array.from(uniqueRubros).sort();
+}
+
 generate_values_Mun_Rubro = function (municipio_sel,Rubro) {
   //Codigo para generar valores al seleccionar el año en la pestaña: 'barplot_entidad'
   if (!data_municipal_fetched_and_splitted) {
     return [];
   }
   //console.log(data_municipal_fetched_and_splitted)
+  console.log("Obras: ",data_municipal_fetched_and_splitted
+    .filter((row)=>{
+      return(row.NOM_MUN==municipios[municipio_sel] & row.Rubro===Rubro)
+    }))
   return data_municipal_fetched_and_splitted
     .filter((row)=>{
       return(row.NOM_MUN==municipios[municipio_sel] & row.Rubro===Rubro)
     })
 };
-generate_values_Ejercicios_dado_Año = function (municipio_sel, año_sel) {
 
+generate_resumen_inversion_por_año = function (municipio_sel) {
+  // Aseguramos que los datos estén cargados
+  if (!data_municipal_fetched_and_splitted) {
+    return {}; // Regresamos un objeto vacío si no hay datos
+  }
+
+  // Filtramos los datos para obtener solo los del municipio seleccionado
+  const selectedMunicipioName = municipios[municipio_sel];
   const filteredData = data_municipal_fetched_and_splitted.filter((row) => {
-
-    return row.NOM_MUN === municipios[municipio_sel] && row.Ejercicio === año_sel;
+    return row.NOM_MUN === selectedMunicipioName;
   });
 
-  // Usamos reduce para contar el número de obras por cada Rubro
-  const rubrosContados = filteredData.reduce((acc, curr) => {
-    const rubro = curr.Rubro; // Accedemos al valor del Rubro en la fila actual
+  // Usamos reduce para agrupar por año y sumar obras e inversión
+  const resumenPorAño = filteredData.reduce((acc, curr) => {
+    const año = curr.Ejercicio;
+    const inversion = parseFloat(curr.Inversión || 0); 
 
-    // Si el rubro ya existe en el acumulador, incrementamos su contador
-    if (acc[rubro]) {
-      acc[rubro]++;
-    } else {
-      // Si el rubro no existe, lo inicializamos con 1
-      acc[rubro] = 1;
+    if (!acc[año]) {
+      acc[año] = {
+        obrasTotal: 0,
+        inversionTotal: 0
+      };
     }
+
+    acc[año].obrasTotal++;
+    acc[año].inversionTotal += inversion;
+
     return acc;
-  }, {}); // Inicializamos el acumulador como un objeto vacío
+  }, {}); 
 
-  const outputArray = Object.entries(rubrosContados);
-
-  return outputArray;
+  return resumenPorAño;
 };
-
 
 generate_values_Inversion_dado_Mun = function (municipio_sel) {
   const filteredData = data_municipal_fetched_and_splitted.filter((row) => {
@@ -160,84 +240,7 @@ generate_values_Inversion_dado_Mun = function (municipio_sel) {
 
 LargeCsvCargado.then(()=>{
   ///grafica de prueba
-  data_mun = {
-    labels:["A","B","C"],
-    datasets: [
-      {
-        axis: "y",
-        label: "Tasa de delito por cada mil habitantes",
-        data: [1,2,3],
-        fill: false,
-        backgroundColor: [
-          "rgba(98,17,50,0.1)",
-          "rgba(157,36,73,0.1)",
-          "rgba(112,144,144,0.1)",
-          "rgba(212,193,156,0.1)",
-          "rgba(179,142,93,0.1)",
-          "rgba(29,29,27,0.1)",
-          "rgba(9, 86, 70,0.1)",
-        ],
-        borderColor: [
-          "rgb(98,17,50)",
-          "rgb(157,36,73)",
-          "rgb(112,144,144)",
-          "rgb(212,193,156)",
-          "rgb(179,142,93)",
-          "rgb(29,29,27)",
-          "rgb(9, 86, 70)",
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
-  const ctx_mun = document
-    .getElementById("barplot_tipo_por_año_municipal")
-    .getContext("2d"); //inicio a crear la gráfica
-
-  chart_barplot_mun_tipos_por_año = new Chart(ctx_mun, {
-    type: "bar",
-    data: data_mun,
-    
-    responsive: true,
-    options: {interaction:{intersect: false,
-      mode:'y'
-    },
-      indexAxis: "y",
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          
-          ticks: {
-            precision:0,
-            mirror: true,
-            color: "black",
-            font: { size: 15 },
-          },
-        },
-        x: { position: "top",
-         },
-      },
-      locale: "en-EN",
-      plugins: {
-        tooltip: {
-          // callbacks: {
-          //   title: (tooltipItems) => {
-          //     // Obtener el label original
-          //     let originalLabel = tooltipItems[0].label;
-          //     if(sub_labels_clasificacion[originalLabel.substring(0,originalLabel.length-3)]){
-          //       return(sub_labels_clasificacion[originalLabel.substring(0,originalLabel.length-3)])
-          //     }
-          //     else{
-          //       return originalLabel
-          //     }
-              
-          //   }
-          // }
-        }
-      }
-    },
-    //plugins:plugin_actualizar_eleccion_cruzada
-  });
+  
   console.log(generate_values_Mun(0
     //,"Infraestructura Hídrica",'2024'
   ))

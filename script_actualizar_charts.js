@@ -13,10 +13,11 @@ $("#tipo_dropdown").change(function () {
   //Creamos una con los datos actualizados
   console.log("rubro actualizado a " + this.value);
   //El valor actual del año se jala del select
-  const año_sel=document.getElementById('año_dropdown').value
-  console.log(año_sel)
-  let datosDeTipoCambiado=generate_values_Mun_Rubro_Año(municipio_actual,this.value)
-  console.log(datosDeTipoCambiado)
+  //const año_sel=document.getElementById('año_dropdown').value
+  //console.log(año_sel)
+  //let datosDeTipoCambiado=generate_values_Mun_Rubro_Año(municipio_actual,this.value)
+  //console.log(datosDeTipoCambiado)
+  updateWorksTable(this.value)//Segundo cuadrante
 });
 
 //creamos una promesa de ordenar los municipios según la seleccion. Año y Tipo. 
