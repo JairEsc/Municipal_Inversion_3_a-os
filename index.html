@@ -14,6 +14,7 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-search@2.3.7/dist/leaflet-search.src.css" />
     <script src="https://unpkg.com/leaflet-search@2.3.7/dist/leaflet-search.src.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 
 </head>
@@ -79,45 +80,39 @@
 
                             const datasets = years.reverse().map((year, index) => { // Added 'index' to the map callback
                                 const dataForThisYear = allUniqueRubros.map(rubro => {
-                                    // Get the count for this rubro in this specific year, default to 0 if not present
                                     return historicRubroTotalsByYear[rubro] && historicRubroTotalsByYear[rubro][year] ?
                                         historicRubroTotalsByYear[rubro][year] : 0;
                                 });
 
-                                // Use the modulo operator (%) to cycle through the colorPalette
                                 const backgroundColor = colorPalette[index % colorPalette.length];
                                 
-                                // For borderColor, you might want a slightly darker/lighter version of the backgroundColor
-                                // or just use a solid color like black or white for contrast.
-                                // For simplicity, let's keep it the same as background or a generic dark/light.
-                                const borderColor = backgroundColor; // Or 'rgba(0,0,0,0.8)' or 'rgba(255,255,255,0.8)'
+                                
+                                const borderColor = backgroundColor;
 
                                 return {
                                     label: `Año ${year}`,
                                     data: dataForThisYear,
-                                    backgroundColor: backgroundColor, // Assign a single color for the whole dataset (year)
+                                    backgroundColor: backgroundColor, 
                                     borderColor: borderColor,
                                     borderWidth: 1
                                 };
                             });
 
-                            // --- Render the Chart ---
                             const ctx = document.getElementById('lineplot_año_por_tipo_estatal').getContext('2d');
 
-                            // Destroy existing chart instance if it exists
                             if (myHistoricRubrosChart) {
                                 myHistoricRubrosChart.destroy();
                             }
 
                             myHistoricRubrosChart = new Chart(ctx, {
-                                type: 'bar', // Bar chart type
+                                type: 'bar', 
                                 data: {
-                                    labels: allUniqueRubros, // Rubros on the X-axis
+                                    labels: allUniqueRubros, 
                                     datasets: datasets
                                 },
                                 options: {
                                     responsive: true,
-                                    maintainAspectRatio: false, // Allows you to control chart size with CSS
+                                    maintainAspectRatio: false, 
                                     plugins: {
                                         title: {
                                             display: true,
@@ -133,14 +128,14 @@
                                     },
                                     scales: {
                                         x: {
-                                            stacked: true, // Crucial for stacking by year
+                                            stacked: true, 
                                             title: {
                                                 display: true,
                                                 text: 'Rubro'
                                             }
                                         },
                                         y: {
-                                            stacked: true, // Crucial for stacking by year
+                                            stacked: true, 
                                             beginAtZero: true,
                                             title: {
                                                 display: true,
@@ -165,7 +160,15 @@
 
 
                     // Función para actualizar el contenido de la tabla basado en municipio_actual
+                    function llevame_a_ubicacion(obraID,feature){
+                        //Voy a asumir que el feature es un punto o un poligono 
+                        // (hasta podría ser una linea para las vialidades)
+                        //En cualquiera de los casos el click sobre el icon
+                        //Agrega un marcador o un poligono resaltado
+                    }
+                    
                     function updateWorksTable(rubro_sel) {
+                        grupo_de_markers.clearLayers();
                         const tableBody = document.querySelector('#tabla_obras_municipal tbody');
                         const noDataMessage = document.getElementById('noDataMessage');
                         const worksData = generate_values_Mun_Rubro(municipio_actual, rubro_sel);
@@ -193,34 +196,176 @@
                                 const inversionB = parseFloat(b.Inversión || 0);
                                 return inversionB - inversionA;
                             });////Arreglar el order. Primero año, luego inversión.
+                            function buscarYAbrirPopup(textoBuscado) {
+                                grupo_de_markers.eachLayer(function(marker) {
+                                    // Asegúrate de que el marcador tenga un popup antes de intentar acceder a él
+                                    if (marker.getPopup()) {
+                                        var contenidoPopup = marker.getPopup().getContent();
 
+                                        // Convierte ambos a minúsculas para una búsqueda insensible a mayúsculas/minúsculas
+                                        if (typeof contenidoPopup === 'string' && contenidoPopup.toLowerCase().includes(textoBuscado.toLowerCase())) {
+                                            console.log("Coincidencia encontrada en:", contenidoPopup);
+
+                                            // Simular un clic para abrir el popup
+                                            marker.openPopup();
+
+                                            // Opcional: Centrar el mapa en el marcador que se abrió
+                                            marker.getLatLng().lat, marker.getLatLng().lng
+                                            map_H.setView([marker.getLatLng().lat, marker.getLatLng().lng], map_h.getZoom());
+
+                                            // Si solo quieres abrir el primer popup que coincida, puedes salir de la función aquí
+                                            // return;
+                                        }
+                                    }
+                                });
+                            }
+                            const obras_de_tal_municipio=obras_from_js.features.filter((feat)=>{
+                                        //console.log(feat.properties.Municipio_inters)
+                                        //console.log(municipios[municipio_actual])
+                                        //console.log(feat.properties.Municipio_inters==municipios[municipio_actual])
+                                        return feat.properties.Municipio_inters==municipios[municipio_actual]
+                                    })
+                                    //console.log(obras_de_tal_municipio.length)
+                                    function normalRandom(mean = 0, stdDev = 0.0001) {
+                                        let u = 0, v = 0;
+                                        while (u === 0) u = Math.random(); // Excluir 0 para evitar log(0)
+                                        while (v === 0) v = Math.random();
+                                        let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+                                        return num * stdDev + mean;
+                                    }
+
+                                    // --- Variables para almacenar geometrías únicas y sus conteos ---
+                                    const geometrias_unicas = []; // Almacenará las coordenadas únicas (ej: "lat,lng")
+                                    const conteo_geometrias_unicas = {}; // Objeto para contar ocurrencias de cada coordenada
+                                    const indices_geometrias_unicas = {}; // Para mapear coordenadas a sus índices en geometrias_unicas
+
+                                    // --- Paso 1: Identificar y Contar Geometrías Únicas ---
+                                    // Usaremos un objeto para un acceso más eficiente a los conteos
+                                    obras_de_tal_municipio.forEach((obra) => {
+                                        const lat = obra.geometry.coordinates[1];
+                                        const lng = obra.geometry.coordinates[0];
+                                        const key = `${lat},${lng}`; // Usar una clave de cadena para el objeto
+
+                                        if (!conteo_geometrias_unicas[key]) {
+                                            conteo_geometrias_unicas[key] = 1;
+                                            geometrias_unicas.push({ lat: lat, lng: lng }); // Guardamos el objeto para fácil acceso
+                                            indices_geometrias_unicas[key] = geometrias_unicas.length - 1; // Guarda el índice
+                                        } else {
+                                            conteo_geometrias_unicas[key]++;
+                                        }
+                                    });
+
+                                    // --- Paso 2: Iterar y Añadir Marcadores con Ruido ---
+                                    // Asegúrate de que 'grupo_de_markers' y 'map' estén definidos previamente
+                                    // var grupo_de_markers = L.layerGroup([]).addTo(map);
+
+                                    obras_de_tal_municipio.forEach((feat) => {
+                                        const originalLat = feat.geometry.coordinates[1];
+                                        const originalLng = feat.geometry.coordinates[0];
+                                        const key = `${originalLat},${originalLng}`;
+
+                                        let finalLat = originalLat;
+                                        let finalLng = originalLng;
+
+                                        // Si la geometría se repite, aplica ruido
+                                        if (conteo_geometrias_unicas[key] > 1) {
+                                            // La desviación estándar del ruido. Ajusta este valor según la dispersión deseada.
+                                            // Un valor de 0.0001 para lat/lng es usualmente una buena distancia para separar puntos cercanos.
+                                            const stdDev = 0.001; // Aproximadamente ~11 metros en latitud, menos en longitud cerca del ecuador
+
+                                            finalLat += normalRandom(0, stdDev);
+                                            finalLng += normalRandom(0, stdDev);
+                                        }
+
+                                        // Crea y añade el marcador con las coordenadas (posiblemente con ruido)
+                                        grupo_de_markers.addLayer(L.marker(L.latLng(
+                                            finalLat,
+                                            finalLng
+                                        )).bindPopup(feat.properties['Obra.x']));
+                                    });
                             sortedWorks.forEach(work => {
+                                //console.log(work)
                                 const row = tableBody.insertRow();
                                 row.insertCell().textContent = work.Ejercicio;
+
                                 const formattedInvestment = new Intl.NumberFormat('es-MX', {
                                     style: 'currency',
-                                    currency: 'MXN', // Or your desired currency code
+                                    currency: 'MXN',
                                     minimumFractionDigits: 0,
                                     maximumFractionDigits: 0
                                 }).format(work.Inversión);
                                 row.insertCell().textContent = formattedInvestment;
+
                                 row.insertCell().textContent = work['Habitantes beneficiados'] === 0 ? 'Sin dato' : work['Habitantes beneficiados'];
+                                
                                 const obraCell = row.insertCell();
-                                obraCell.textContent = work.Obra;
-                                obraCell.classList.add('obra-column'); // Añadir clase para estilos específicos
-                            });
-                        }
-                    }
+                                obraCell.classList.add('obra-column');
+                                //console.log(work['tiene_geo'])
+                                if(work['tiene_geo']=='TRUE'){
+                                    const icon = document.createElement('i');
+                                    icon.classList.add('bi', 'bi-geo-alt');
+                                    icon.classList.add('obra-icon');
+
+                                    //prender todos los markers que satisfacen ser de tal municipio
+                                    
+                                    //console.log(obras_de_tal_municipio)
+                                    //console.log(grupo_de_markers)
+                                    //
+                                    // --- NEW: Store the ID using a data attribute on the icon ---
+                                    icon.dataset.workId = work.ID; // Assigns the ID to data-work-id attribute
+                                    // --- END NEW ---
+
+                                    icon.addEventListener('mouseover', () => {
+                                        icon.classList.remove('bi-geo-alt');
+                                        icon.classList.add('bi-geo-alt-fill');
+                                    });
+                                    icon.addEventListener('mouseout', () => {
+                                        icon.classList.remove('bi-geo-alt-fill');
+                                        icon.classList.add('bi-geo-alt');
+                                    });
+
+                                    icon.addEventListener('click', () => {
+                                        // --- MODIFIED: Retrieve the ID from the data attribute ---
+                                        //Que cambie este. Que busque en la capa agregada y haga pop up al seleccionado.
+
+                                        const workIdToRetrieve = icon.dataset.workId; // Get the ID from the data attribute
+                                        //console.log("ID de la obra:", workIdToRetrieve);
+
+                                        // Your existing logic for map manipulation can now use workIdToRetrieve
+                                        const U = obras_from_js.features.filter((feat) => {
+                                            // Make sure your comparison is robust (e.g., convert workIdToRetrieve to the same type as feat.properties.ID if needed)
+                                            return feat.properties['join'] == parseInt(workIdToRetrieve)+'-'+work.NOM_MUN; // Assuming feat.properties also has an 'ID'
+                                        });
+                                        //console.log(U)
+                                        buscarYAbrirPopup(U[0].properties['Obra.x'])
+                                    });
+
+                                    const obraText = document.createElement('span');
+                                    obraText.textContent = work.Obra;
+                                    obraText.classList.add('obra-text');
+
+                                    obraCell.appendChild(icon);
+                                    obraCell.appendChild(obraText);
+                                }
+                                else{
+                                const obraText = document.createElement('span');
+                                obraText.textContent = work.Obra;
+                                obraText.classList.add('obra-text');
+
+                                //obraCell.appendChild(icon);
+                                obraCell.appendChild(obraText);
+                                }
+                                
+                            });}}
                     function updateInvTable() {
                         const tableBody = document.querySelector('#tabla_inversion_municipal tbody');
                         const noDataMessage = document.getElementById('noDataMessage2');
                         // Assuming generate_resumen_inversion_por_año returns an object like { 2022: { obrasTotal: ..., inversionTotal: ... }, ... }
                         const worksData = generate_resumen_inversion_por_año(municipio_actual);
-                        console.log(worksData); // This will show the object structure
+                        console.log(worksData);
 
-                        tableBody.innerHTML = ''; // Clear existing rows
+                        tableBody.innerHTML = ''; 
 
-                        // Check if the worksData object is empty (no years with data)
                         const years = Object.keys(worksData).sort((a, b) => b - a); 
 
                         if (years.length === 0) {
@@ -251,9 +396,8 @@
                                 row.insertCell().textContent = formattedInvestment;
                             });
 
-                            // --- Añadir el renglón del total histórico ---
                             const totalRow = tableBody.insertRow();
-                            totalRow.classList.add('total-row'); // Añadir clase para estilos específicos
+                            totalRow.classList.add('total-row'); 
 
                             totalRow.insertCell().textContent = 'Histórico Total'; // Etiqueta para el total
                             totalRow.insertCell().textContent = totalObrasHistorico; // Suma total de obras
@@ -349,11 +493,10 @@
                 <p class="no-data" id="noDataMessage2" style="display: none;">No hay obras registradas para este
                     municipio.</p>
             </div>
-
-
         </div>
         <script src="script_tablero_inversion_municipal.js"></script>
         <script src="script_actualizar_charts.js"></script>
+        <script src="Datos/sipdus_geojson_mixed.js"></script>
 
 
     </div>

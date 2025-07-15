@@ -6,26 +6,28 @@
 let data_municipal_fetched_and_splitted = []; // Variable global para almacenar los datos procesados
 
 let LargeCsvCargado = new Promise((resolve, reject) => {
-  fetch("Datos/SIPDUS_2022-2025.csv")
+  fetch("Datos/SIPDUS_2022-2025_tiene_geo (2).tsv")
     .then((response) => {
       return response.text();
     })
     .then((data) => {
       const lines = data.split("\n").filter(line => line.trim() !== ''); // Filtra líneas vacías
-      const headers = lines[0].split(",").map(header => header.trim().replace(/^"|"$/g, "").replace(/^'|'$/g, "")); // Obtiene los encabezados del CSV
+      const headers = lines[0].split("\t").map(header => header.trim().replace(/^"|"$/g, "").replace(/^'|'$/g, "")); // Obtiene los encabezados del CSV
       //console.log(headers)
       // Define los campos que te interesan y su orden
       const desiredHeaders = [
+        "ID",
         "NOM_MUN",
         "Rubro",
         "Ejercicio",
         "Obra",
         "Inversión",
         "Habitantes beneficiados",
+        "tiene_geo"
       ];
       // Mapea los datos a un formato de objetos con solo los campos deseados
       data_municipal_fetched_and_splitted = lines.slice(1).map((line) => {
-        const values = line.split(",");
+        const values = line.split("\t");
         //console.log(values)
         let rowData = {};
         desiredHeaders.forEach((headerName) => {
@@ -157,10 +159,10 @@ generate_values_Mun_Rubro = function (municipio_sel,Rubro) {
     return [];
   }
   //console.log(data_municipal_fetched_and_splitted)
-  console.log("Obras: ",data_municipal_fetched_and_splitted
-    .filter((row)=>{
-      return(row.NOM_MUN==municipios[municipio_sel] & row.Rubro===Rubro)
-    }))
+  // console.log("Obras: ",data_municipal_fetched_and_splitted
+  //   .filter((row)=>{
+  //     return(row.NOM_MUN==municipios[municipio_sel] & row.Rubro===Rubro)
+  //   }))
   return data_municipal_fetched_and_splitted
     .filter((row)=>{
       return(row.NOM_MUN==municipios[municipio_sel] & row.Rubro===Rubro)

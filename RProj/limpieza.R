@@ -22,3 +22,29 @@ municipios$inv_per_cap_indir=rnorm(84,mean = 1500,sd=50)
 
 
 st_write(municipios,"geojson_hgo.geojson",driver = "geojson")
+
+
+
+zzz=sf::read_sf("Datos/SIPDUS_BDGeneral2/SIPDUS_BDGeneral2.shp")
+
+
+
+zzz$No. |> unique() |> length()
+
+
+csv_leido=readxl::read_excel("../../RProj/SIPDUS_Municipios_2022-2025.xlsx")
+csv_leido=csv_leido |> dplyr::select(No.,Municipio_ind,Rubro,Inversión,Habitantes.beneficiados,Ejercicio,Obra)
+zzz2=zzz |> 
+  dplyr::group_by(No.) |> dplyr::slice_head(n=1)
+
+csv_leido=merge(csv_leido,zzz2 |> dplyr::select(No.,geometry),by='No.',all.x=T)
+csv_leido$tiene_geo=sf::st_is_empty(csv_leido$geometry)
+
+###
+csv_leido |> sf::st_as_sf() |> 
+  sf::st_drop_geometry() |> write.table("../../Datos/SIPDUS_2022-2025_tiene_geo.tsv",row.names = F,sep = "\t")
+
+csv_leido |> sf::st_as_sf() |> 
+  dplyr::filter(!sf::st_is_empty(geometry)) |> 
+  sf::st_transform(sf::st_crs("EPSG:4326")) |> 
+  sf::st_write("../../geojson_obras_c_geo.geojson",driver='GeoJSON')

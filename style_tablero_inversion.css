@@ -211,10 +211,21 @@ transition: background-color 0.3s ease;
 max-width: 20vw; /* Limita el ancho de la columna de obra */
 word-wrap: break-word; /* Permite que el texto se rompa y se ajuste */
 overflow-wrap: break-word; /* Otra propiedad para asegurar el ajuste */
+display: flex;
+align-items: center;
 }
 
 .no-data {
 text-align: center;
 color: #888;
 padding: 20px;
+}
+
+.obra-icon{
+  padding-right: 0.5vw;
+  vertical-align: middle;
+}
+.obra-icon:hover{
+  padding-right: 0.5vw;
+  box-shadow: #333;
 }

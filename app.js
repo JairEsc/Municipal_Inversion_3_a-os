@@ -14,7 +14,9 @@ var map_h = L.map('map_tablero_inversion_hidalgo',{
 });
 map_h.createPane('municipios'); // Pane normal
 map_h.createPane('municipioActual'); // Pane para el municipio seleccionado
+var grupo_de_markers=L.layerGroup([])
 
+grupo_de_markers.addTo(map_h)
 // Asignar prioridad: municipioActual estará arriba de municipios
 map_h.getPane('municipios').style.zIndex = 400;
 map_h.getPane('municipioActual').style.zIndex = 500;
@@ -39,11 +41,9 @@ map_h.on('click', (e) => {
     poligonos_map_h.resetStyle();
 });
 
-
-
 municipios=["Acatlán","Acaxochitlán","Actopan","Agua Blanca de Iturbide","Ajacuba","Alfajayucan","Almoloya","Apan","Atitalaquia","Atlapexco","Atotonilco de Tula","Atotonilco el Grande","Calnali","Cardonal","Chapantongo","Chapulhuacán","Chilcuautla","Cuautepec de Hinojosa","El Arenal","Eloxochitlán","Emiliano Zapata","Epazoyucan","Francisco I. Madero","Huasca de Ocampo","Huautla","Huazalingo","Huehuetla","Huejutla de Reyes","Huichapan","Ixmiquilpan","Jacala de Ledezma","Jaltocán","Juárez Hidalgo","La Misión","Lolotla","Metepec","Metztitlán","Mineral de la Reforma","Mineral del Chico","Mineral del Monte","Mixquiahuala de Juárez","Molango de Escamilla","Nicolás Flores","Nopala de Villagrán","Omitlán de Juárez","Pachuca de Soto","Pacula","Pisaflores","Progreso de Obregón","San Agustín Metzquititlán","San Agustín Tlaxiaca","San Bartolo Tutotepec","San Felipe Orizatlán","San Salvador","Santiago de Anaya","Santiago Tulantepec de Lugo Guerrero","Singuilucan","Tasquillo","Tecozautla","Tenango de Doria","Tepeapulco","Tepehuacán de Guerrero","Tepeji del Río de Ocampo","Tepetitlán","Tetepango","Tezontepec de Aldama","Tianguistengo","Tizayuca","Tlahuelilpan","Tlahuiltepa","Tlanalapa","Tlanchinol","Tlaxcoapan","Tolcayuca","Tula de Allende","Tulancingo de Bravo","Villa de Tezontepec","Xochiatipan","Xochicoatlán","Yahualica","Zacualtipán de Ángeles","Zapotlán de Juárez","Zempoala","Zimapán","Cobertura Estatal"]
 //municipios = municipios.map(m => m.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" "));
-
+//municipios=municipio_actual.map(m=> m.toCap)
 getGradientColor = function(startColor, endColor, percent){
     // strip the leading # if it's there
     startColor = startColor.replace(/^\s*#|\s*$/g, '');
