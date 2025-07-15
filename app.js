@@ -323,9 +323,9 @@ L.Control.Watermark = L.Control.extend({
     onAdd: function(map_h) {
         var img = L.DomUtil.create('img');
 
-        img.src = 'Datos/logo lab.png';
+        img.src = 'Datos/fondo_transp_negritas.png';
         img.style.width = '20vw';
-        img.style.marginBottom = '4vh';
+        img.style.marginBottom = '0vh';
 
         return img;
     },
