@@ -165,7 +165,7 @@ generate_values_Mun_Rubro = function (municipio_sel,Rubro) {
   //   }))
   return data_municipal_fetched_and_splitted
     .filter((row)=>{
-      return(row.NOM_MUN==municipios[municipio_sel] & row.Rubro===Rubro)
+      return(row.NOM_MUN==municipios[municipio_sel] & (row.Rubro===Rubro|Rubro==='Todos los rubros'))
     })
 };
 
@@ -248,7 +248,7 @@ LargeCsvCargado.then(()=>{
   ))
   const rubrosDisponibles = getUniqueRubrosForMunicipio(municipio_actual);
 console.log("Posibles rubros para el municipios seleccionado: ",rubrosDisponibles)
-updateRubrosDropdown(rubrosDisponibles);//Opciones de segundo cuadrante
+updateRubrosDropdown( ['Todos los rubros'].concat(rubrosDisponibles));//Opciones de segundo cuadrante
 //
 //console.log(generate_values_Reduce_Mun_num_obras_por_rubro_por_año(municipio_actual))
 //

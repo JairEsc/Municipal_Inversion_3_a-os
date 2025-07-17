@@ -7,3 +7,5 @@ RProj/.Ruserdata
 RProj/SIPDUS_B*
 RProj/SIPDUS_Municipios_2*
 Datos/spidus_geojson_by_id_mun_poquitos.geojson
+Ocultos/*
+Datos/spidus_geojson_by_id_mun_poquitos_update.geojson
