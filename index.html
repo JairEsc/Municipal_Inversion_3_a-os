@@ -235,7 +235,7 @@
                                 //console.log(feat.properties.Municipio_inters)
                                 //console.log(municipios[municipio_actual])
                                 //console.log(feat.properties.Municipio_inters==municipios[municipio_actual])
-                                return feat.properties.Municipio_inters == municipios[municipio_actual] & (feat.properties.Rubro==rubro_sel || rubro_sel==='Todos los rubros')
+                                return feat.properties.Municipio == municipios[municipio_actual] & (feat.properties.Rubro==rubro_sel || rubro_sel==='Todos los rubros')
                             })
                             //console.log(obras_de_tal_municipio.length)
                             function normalRandom(mean = 0, stdDev = 0.0001) {
@@ -318,7 +318,7 @@
                                         grupo_de_markers.addLayer(L.marker(L.latLng(
                                             finalLat,
                                             finalLng
-                                        ),{icon:generar_marker_dado_color(color_custom)}).bindPopup(feat.properties['Obra.x']));
+                                        ),{icon:generar_marker_dado_color(color_custom)}).bindPopup(feat.properties['Obra']));
 
                                     })
                                 }
@@ -390,10 +390,10 @@
                                         // Your existing logic for map manipulation can now use workIdToRetrieve
                                         const U = obras_from_js.features.filter((feat) => {
                                             // Make sure your comparison is robust (e.g., convert workIdToRetrieve to the same type as feat.properties.ID if needed)
-                                            return feat.properties['join'] == parseInt(workIdToRetrieve) + '-' + work.NOM_MUN; // Assuming feat.properties also has an 'ID'
+                                            return feat.properties['ID_OBRA'] == parseInt(workIdToRetrieve) + '_' + work.NOM_MUN; // Assuming feat.properties also has an 'ID'
                                         });
                                         //console.log(U)
-                                        buscarYAbrirPopup(U[0].properties['Obra.x'])
+                                        buscarYAbrirPopup(U[0].properties['Obra'])
                                     });
 
                                     const obraText = document.createElement('span');
