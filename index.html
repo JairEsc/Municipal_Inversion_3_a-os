@@ -176,6 +176,7 @@
                     });
                     function generar_marker_dado_color(color_en_hex){
                         return (L.divIcon({
+                                            //iconSize: "auto",
                                             style:'margin-left: -6px; margin-top: -6px;',
                                             html:`<svg style="margin-left: -6px;margin-top: -6px;" width="28" height="41" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><linearGradient id="b"><stop stop-color="#2e6c97" offset="0"/><stop stop-color="#3883b7" offset="1"/></linearGradient><linearGradient id="a"><stop stop-color="#126fc6" offset="0"/><stop stop-color="#4c9cd1" offset="1"/></linearGradient><linearGradient y2="-0.004651" x2="0.498125" y1="0.971494" x1="0.498125" id="c" xlink:href="#a"/><linearGradient y2="-0.004651" x2="0.415917" y1="0.490437" x1="0.415917" id="d" xlink:href="#b"/></defs><g><title>Layer 1</title><rect id="svg_1" fill="#fff" width="12.625" height="14.5" x="411.279" y="508.575"/><path stroke=${color_en_hex} id="svg_2" stroke-linecap="round" stroke-width="1.1" fill=${color_en_hex} d="m14.095833,1.55c-6.846875,0 -12.545833,5.691 -12.545833,11.866c0,2.778 1.629167,6.308 2.80625,8.746l9.69375,17.872l9.647916,-17.872c1.177083,-2.438 2.852083,-5.791 2.852083,-8.746c0,-6.175 -5.607291,-11.866 -12.454166,-11.866zm0,7.155c2.691667,0.017 4.873958,2.122 4.873958,4.71s-2.182292,4.663 -4.873958,4.679c-2.691667,-0.017 -4.873958,-2.09 -4.873958,-4.679c0,-2.588 2.182292,-4.693 4.873958,-4.71z"/><path id="svg_3" fill="none" stroke-opacity="0.122" stroke-linecap="round" stroke-width="1.1" stroke="#fff" d="m347.488007,453.719c-5.944,0 -10.938,5.219 -10.938,10.75c0,2.359 1.443,5.832 2.563,8.25l0.031,0.031l8.313,15.969l8.25,-15.969l0.031,-0.031c1.135,-2.448 2.625,-5.706 2.625,-8.25c0,-5.538 -4.931,-10.75 -10.875,-10.75zm0,4.969c3.168,0.021 5.781,2.601 5.781,5.781c0,3.18 -2.613,5.761 -5.781,5.781c-3.168,-0.02 -5.75,-2.61 -5.75,-5.781c0,-3.172 2.582,-5.761 5.75,-5.781z"/></g></svg>`
                                         }))
@@ -251,8 +252,15 @@
                             const indices_geometrias_unicas = {}; 
                             //Aquí hubo IA. Pero la idea es recorrer una vez las obras y quedarme solo con los púntos únicos y un contador del número de 
                             //veces que se repite. Luego, cuando lo agregue al mapa, si era de los que se repetían, le pongo ruido gaussiano
+                            //Quizás haya que modificarlo porque ahora hay que contar dentro de multipuntos y puntos.
+                            
                             // --- Paso 1: Identificar y Contar Geometrías Únicas 
                             obras_de_tal_municipio.forEach((obra) => {
+                                if(obra.geometry.type !='Point' && obra.geometry.type != 'MultiPoint'){
+                                    //Es  línea. 
+
+                                }
+                                else{//es punto o multipunto
                                 const lat = obra.geometry.coordinates[1];
                                 const lng = obra.geometry.coordinates[0];
                                 const key = `${lat},${lng}`; // Usar una clave de cadena para el objeto
@@ -263,7 +271,7 @@
                                     indices_geometrias_unicas[key] = geometrias_unicas.length - 1; // Guarda el índice
                                 } else {
                                     conteo_geometrias_unicas[key]++;
-                                }
+                                }}
                             });
 
                             // --- Paso 2: Iterar y Añadir Marcadores con Ruido ---
@@ -295,7 +303,7 @@
                                                 break;
                                         }
                                 //Primero revisamos el tipo de geometría 
-                                if(feat.geometry.type==='MultiPoint'){
+                                if(feat.geometry.type==='MultiPoint'){//Si tengo tiempo, los conectamos como grafo
                                     feat.geometry.coordinates.forEach((feat_c)=>{//otro ciclo
                                         const originalLat = feat_c[1];
                                         const originalLng = feat_c[0];
@@ -323,6 +331,16 @@
                                     })
                                 }
                                 else{
+
+                                    if(feat.geometry.type==='LineString'){//Supongamos simple
+                                        grupo_de_lineas.addLayer(L.polyline(feat.geometry.coordinates.map(coord => L.latLng(coord[1], coord[0])), {
+                                            color: 'red',
+                                            weight: 7,
+                                            opacity: 0.7
+                                        }).bindPopup(feat.properties['Obra']));
+                                    }
+                                    else{
+
                                     const originalLat = feat.geometry.coordinates[1];
                                     const originalLng = feat.geometry.coordinates[0];
                                     const key = `${originalLat},${originalLng}`;
@@ -342,8 +360,8 @@
                                     grupo_de_markers.addLayer(L.marker(L.latLng(
                                         finalLat,
                                         finalLng
-                                    ),{icon:generar_marker_dado_color(color_custom)}).bindPopup(feat.properties['Obra.x']));
-                                }
+                                    ),{icon:generar_marker_dado_color(color_custom)}).bindPopup(feat.properties['Obra']));
+                                }}
                             });
                             sortedWorks.forEach(work => {
                                 //console.log(work)
@@ -368,8 +386,7 @@
                                     icon.classList.add('bi', 'bi-geo-alt');
                                     icon.classList.add('obra-icon');
 
-                                    icon.dataset.workId = work.ID; // Assigns the ID to data-work-id attribute
-                                    // --- END NEW ---
+                                    icon.dataset.workId = work.ID; 
 
                                     icon.addEventListener('mouseover', () => {
                                         icon.classList.remove('bi-geo-alt');
@@ -381,7 +398,6 @@
                                     });
 
                                     icon.addEventListener('click', () => {
-                                        // --- MODIFIED: Retrieve the ID from the data attribute ---
                                         //Que cambie este. Que busque en la capa agregada y haga pop up al seleccionado.
 
                                         const workIdToRetrieve = icon.dataset.workId; // Get the ID from the data attribute

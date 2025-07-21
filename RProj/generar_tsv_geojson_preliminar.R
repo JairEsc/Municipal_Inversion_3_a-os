@@ -36,7 +36,11 @@ por_obra_y_loc=merge(por_obra_y_loc,obras_ya_encontradas,by='ID_OBRA',all.x=T)
 por_obra_y_loc_s_g_3_muns=por_obra_y_loc |> 
   dplyr::filter(st_is_empty(geometry)) |> 
   dplyr::filter(Municipio%in%c("Pachuca de Soto","Mineral de la Reforma","Tizayuca"))
-
+por_obra_y_loc_s_g_tula_zempoala_zapotlan=por_obra_y_loc |> 
+  dplyr::filter(st_is_empty(geometry)) |> 
+  dplyr::filter(Municipio%in%c("Tula de Allende","Zempoala","Zapotlán de Juárez"))
+por_obra_y_loc_s_g_tula_zempoala_zapotlan |> dplyr::select(-geometry,-fuente) |> 
+  openxlsx::write.xlsx("../Ocultos/Georeferenciacion_SIPDUS_tula_zemp_zapotl.xlsx")
 
 por_obra_y_loc_s_g_3_muns |>st_drop_geometry() |> dplyr::select(-geometry) |> as.data.frame()  |> openxlsx::write.xlsx("../Ocultos/Georeferenciacion_SIPDUS_pachuca_mineral_tiza.xlsx")
 
@@ -62,7 +66,7 @@ obras_ya_util_tiene_geo=obras_ya_util_tiene_geo |>
 
 
 obras_ya_util_tiene_geo |> write.table("../Datos/SIPDUS_2022-2025_tiene_geo (2).tsv",row.names = F,sep = "\t")
-
+#obras_ya_util_tiene_geo$geometry[420]=st_cast(obras_ya_util_tiene_geo$geometry[420],"LINESTRING")
 obras_ya_util_tiene_geo |> dplyr::filter(!st_is_empty(geometry)) |> 
   dplyr::mutate(tiene_geo=!st_is_empty(geometry)) |> 
   st_write("../Datos/spidus_obras_c_geometrias_bien.geojson")

@@ -15,8 +15,10 @@ var map_h = L.map('map_tablero_inversion_hidalgo',{
 map_h.createPane('municipios'); // Pane normal
 map_h.createPane('municipioActual'); // Pane para el municipio seleccionado
 var grupo_de_markers=L.layerGroup([])
+var grupo_de_lineas=L.layerGroup([])
 
 grupo_de_markers.addTo(map_h)
+grupo_de_lineas.addTo(map_h)
 // Asignar prioridad: municipioActual estará arriba de municipios
 map_h.getPane('municipios').style.zIndex = 400;
 map_h.getPane('municipioActual').style.zIndex = 500;
