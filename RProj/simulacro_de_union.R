@@ -3,7 +3,7 @@ library(sf)
 
 
 ##Leemos el docs con el municipio encontrado
-docs_sheets=readxl::read_excel("../Ocultos/Georeferenciacion_SIPDUS.xlsx")
+docs_sheets=readxl::read_excel("../../Ocultos/Georeferenciacion_SIPDUS.xlsx")
 puntos_alfred=docs_sheets |> 
   dplyr::filter(RESPONSABLE=='Alfred'&!is.na(X))
 

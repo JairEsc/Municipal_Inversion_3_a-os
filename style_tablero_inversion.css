@@ -229,3 +229,7 @@ padding: 20px;
   padding-right: 0.5vw;
   box-shadow: #333;
 }
+
+path.stroke-polyline {
+    filter: drop-shadow(1px 1px 0 #fff) drop-shadow(-1px -1px 0 #FFF) drop-shadow(1px -1px 0 #FFF) drop-shadow(-1px 1px 0 #fff);
+}

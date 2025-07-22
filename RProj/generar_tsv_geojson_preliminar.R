@@ -70,3 +70,25 @@ obras_ya_util_tiene_geo |> write.table("../Datos/SIPDUS_2022-2025_tiene_geo (2).
 obras_ya_util_tiene_geo |> dplyr::filter(!st_is_empty(geometry)) |> 
   dplyr::mutate(tiene_geo=!st_is_empty(geometry)) |> 
   st_write("../Datos/spidus_obras_c_geometrias_bien.geojson")
+
+
+
+
+
+
+
+
+
+
+
+############################################################
+############################################################
+############################################################
+
+zzz=st_read("../Datos/sipdus_geometrias.geojson")
+xx=readxl::read_excel("../RProj/SIPDUS_Municipios_2022-2025.xlsx")
+xx=xx |> 
+  dplyr::select(Municipio_ind:Trabajos,-Municipio_ind) |> 
+  dplyr::mutate(ID_OBRA=paste0(No.,"_",Municipio))
+yy=xx |> 
+  dplyr::mutate(tiene_geo=ifelse(ID_OBRA%in%zzz$ID_OBRA,T,F))

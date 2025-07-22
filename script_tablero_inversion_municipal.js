@@ -6,7 +6,7 @@
 let data_municipal_fetched_and_splitted = []; // Variable global para almacenar los datos procesados
 
 let LargeCsvCargado = new Promise((resolve, reject) => {
-  fetch("Datos/SIPDUS_2022-2025_tiene_geo (2).tsv")
+  fetch("Datos/SIPDUS_INHIFE.tsv")
     .then((response) => {
       return response.text();
     })
