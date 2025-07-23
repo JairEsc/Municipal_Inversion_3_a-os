@@ -20,6 +20,7 @@
 </head>
 
 <body>
+    
     <div id="contenedor_global" style="display: flex;">
         <div id="primera_mitad"
             style="width: 50vw;height: 100vh;display: inline-block;background-color: rgba(112, 114, 114,0.9);">
@@ -738,6 +739,27 @@ function updateWorksTable(rubro_sel) {
         <script src="script_tablero_inversion_municipal.js"></script>
         <script src="script_actualizar_charts.js"></script>
         <script src="Datos/sipdus_mixed.js"></script>
+        <script>
+           
+                function waitForObrasAndSimulateClick() {
+                    if (typeof obras_from_js !== "undefined" && document.getElementById("obra_column_id").children.length === 0) {
+                        // Simulate a click in map_h, a Leaflet map at coordinates -98.0423, 20.4642
+                        const latlng = L.latLng(20.4642, -98.0423);
+                        console.log("click");
+                        map_h.fire('click', {
+                            latlng: latlng,
+                            layerPoint: map_h.latLngToLayerPoint(latlng),
+                            containerPoint: map_h.latLngToContainerPoint(latlng),
+                            originalEvent: null
+                        });
+                    } else {
+                        setTimeout(waitForObrasAndSimulateClick, 100); // Check again in 100ms
+                    }
+                }
+                waitForObrasAndSimulateClick();
+            
+            //Smula un click
+        </script>
 
 
     </div>
