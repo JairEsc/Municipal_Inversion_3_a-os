@@ -1,20 +1,25 @@
-let obras_from_js;
+// let obras_from_js;
 
-// Fetch GeoJSON data for works
-fetch("Datos/SIPDUS_INHIFE.geojson")
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        obras_from_js = data;
-        // You can work with obras_from_js here
-    })
-    .catch(error => {
-        console.error("Error fetching sipdus_geometrias.geojson:", error);
-    });
+// function fetchObrasGeoJSON() {
+//     return fetch("Datos/SIPDUS_INHIFE.geojson")
+//         .then(response => {
+//             if (!response.ok) {
+//                 throw new Error(`HTTP error! status: ${response.status}`);
+//             }
+//             return response.json();
+//         })
+//         .then(data => {
+//             obras_from_js = data;
+//             return data;
+//         })
+//         .catch(error => {
+//             console.error("Error fetching sipdus_geometrias.geojson:", error);
+//             throw error;
+//         });
+// }
+
+// // Usage example:
+// fetchObrasGeoJSON().then(data => { });
 
 let municipio_actual = 84; // Default municipality index
 

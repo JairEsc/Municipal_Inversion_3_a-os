@@ -200,6 +200,7 @@ let conteo_geometrias_unicas = {}; // Initialize here if it's meant to be persis
 
 // Function to find a marker by its popup content and open it, then center map
 function buscarYAbrirPopup(feat, textoBuscado) {
+    grupo_de_poligonos.clearLayers();
     let encontrado = false;
 
     // Buscar en el grupo de marcadores
@@ -433,7 +434,7 @@ function updateWorksTable(rubro_sel) {
 
         // --- Paso 1: Identificar y Contar Geometrías Únicas (solo para Point/MultiPoint) ---
         // Iterate only through features that are points or multipoints to count them.
-        obras_from_js.features.forEach((obra) => {
+         obras_from_js.features.forEach((obra) => {
             if (obra.properties.Municipio === municipios[municipio_actual] &&
                 (obra.properties.Rubro === rubro_sel || rubro_sel === 'Todos los rubros')) {
 
@@ -499,6 +500,7 @@ function updateWorksTable(rubro_sel) {
         });
 
         // --- Paso 3: Rellenar la Tabla HTML ---
+        var boolean_icon=false;
         sortedWorks.forEach(work => {
             const row = tableBody.insertRow();
             row.insertCell().textContent = work.Ejercicio;
@@ -517,6 +519,7 @@ function updateWorksTable(rubro_sel) {
             obraCell.classList.add('obra-column');
 
             if (work['tiene_geo'] === 'TRUE') { // Compare as string 'TRUE'
+                boolean_icon=true;
                 const icon = document.createElement('i');
                 icon.classList.add('bi', 'bi-geo-alt');
                 icon.classList.add('obra-icon');
@@ -564,6 +567,18 @@ function updateWorksTable(rubro_sel) {
                 obraCell.appendChild(obraText);
             }
         });
+        if (boolean_icon === true) {
+            const obraColumn = document.getElementById('obra_column_id');
+            if (!obraColumn.querySelector('.geo-icon-helper')) {
+            obraColumn.insertAdjacentHTML('beforeend', '<span class="geo-icon-helper" style="font-size:0.85em;font-weight:normal;color:#555;"><br>(click en el ícono <i class="bi bi-geo-alt"></i> para ver en el mapa)</span>');
+            }
+        } else {
+            const obraColumn = document.getElementById('obra_column_id');
+            const helper = obraColumn.querySelector('.geo-icon-helper');
+            if (helper) {
+            obraColumn.removeChild(helper);
+            }
+        }
     }
 }
 
@@ -682,7 +697,10 @@ function updateWorksTable(rubro_sel) {
                                 <th>Año</th>
                                 <th>Inversión</th>
                                 <th>Beneficiarios</th>
-                                <th>Obra</th>
+                                <th id="obra_column_id" style="text-align: center;">
+                                    Obra
+                                    
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -719,7 +737,7 @@ function updateWorksTable(rubro_sel) {
         </div>
         <script src="script_tablero_inversion_municipal.js"></script>
         <script src="script_actualizar_charts.js"></script>
-        <!-- <script src="Datos/sipdus_geojson_mixed.js"></script> -->
+        <script src="Datos/sipdus_mixed.js"></script>
 
 
     </div>
