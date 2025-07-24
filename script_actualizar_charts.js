@@ -1,8 +1,8 @@
 //---------------------------------------------------
 $("#año_dropdown").change(function () {
-  console.log("Año actualizado a " + this.value);
+  //console.log("Año actualizado a " + this.value);
   let datosDeAñoCambiado=generate_values_Ejercicios_dado_Año(municipio_actual,parseInt(this.value))
-  console.log(datosDeAñoCambiado)
+  //console.log(datosDeAñoCambiado)
 });
 
 $("#tipo_dropdown").change(function () {
@@ -11,7 +11,7 @@ $("#tipo_dropdown").change(function () {
   //actualizamos el objeto data que guarda los valores para el lineplot de tipo
   //destruimos la gráica anterior
   //Creamos una con los datos actualizados
-  console.log("rubro actualizado a " + this.value);
+  //console.log("rubro actualizado a " + this.value);
   //El valor actual del año se jala del select
   //const año_sel=document.getElementById('año_dropdown').value
   //console.log(año_sel)

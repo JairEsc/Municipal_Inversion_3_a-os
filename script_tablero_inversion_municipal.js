@@ -54,12 +54,6 @@ let LargeCsvCargado = new Promise((resolve, reject) => {
 });
 
 // Ejemplo de cómo usar la promesa para saber cuándo los datos están cargados
-LargeCsvCargado.then(() => {
-  console.log("Datos cargados y procesados:", data_municipal_fetched_and_splitted);
-  // Aquí puedes trabajar con data_municipal_fetched_and_splitted
-  // Por ejemplo, para mostrar el primer elemento:
-  // console.log(data_municipal_fetched_and_splitted[0]);
-});
 function getUniqueRubrosForMunicipio(municipio_sel) {
   const selectedMunicipioName = municipios[municipio_sel];
   const filteredData = data_municipal_fetched_and_splitted.filter((row) => {
@@ -243,11 +237,9 @@ generate_values_Inversion_dado_Mun = function (municipio_sel) {
 LargeCsvCargado.then(()=>{
   ///grafica de prueba
   
-  console.log(generate_values_Mun(0
-    //,"Infraestructura Hídrica",'2024'
-  ))
+  
   const rubrosDisponibles = getUniqueRubrosForMunicipio(municipio_actual);
-console.log("Posibles rubros para el municipios seleccionado: ",rubrosDisponibles)
+//console.log("Posibles rubros para el municipios seleccionado: ",rubrosDisponibles)
 updateRubrosDropdown( ['Todos los rubros'].concat(rubrosDisponibles));//Opciones de segundo cuadrante
 //
 //console.log(generate_values_Reduce_Mun_num_obras_por_rubro_por_año(municipio_actual))

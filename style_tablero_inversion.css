@@ -2,18 +2,14 @@ body {
     font-family: Montserrat, sans-serif;
     background-color: #ffffff;
     margin: 0;
-    
+    padding: 0;
 }
-#mapa_web_inversion {
-    height: 100vh; 
-    width: 50vw;
 
-  }
 #map_tablero_inversion_hidalgo {
     height: 100vh; 
     width: 50vw;
   }
-  ul {
+  /* ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -42,26 +38,14 @@ body {
   
   li a:hover {
     background-color: rgba(157,36,73,0.8);
-  }
+  } */
   .nav_seguridad{
   }
   .mapa_web_inversion{}
   .active_nav_seguridad{
     background-color: rgb(157,36,73);
   }
-  .leaflet-control-search .search-tooltip {
-    position: absolute !important;
-    bottom: 100% !important;
-    top: auto !important;
-    left: 0; 
-    z-index: 1000; 
-    max-width: 175px;
-    max-height: 73px;
-    font-size: large !important;
-}
-  .leaflet-control-search .search-tooltip h1 {
-    font-size: large !important;
-}
+  
 .canva_de_chartjs{
   position: relative;
 }
@@ -232,4 +216,76 @@ padding: 20px;
 
 path.stroke-polyline {
     filter: drop-shadow(1px 1px 0 #fff) drop-shadow(-1px -1px 0 #FFF) drop-shadow(1px -1px 0 #FFF) drop-shadow(-1px 1px 0 #fff);
+}
+
+@media (max-width: 767px) {
+  #primera_mitad {
+    width: 100vw !important;
+    height: 50vh !important;
+  }
+  #contenedor_global {
+    width: 100vw !important;
+    height: 50vh !important;
+    
+    display: block !important;
+  }
+  #segunda_mitad {
+    display: flex !important;
+    width: 200vw !important;
+    height: 50vh !important;
+  }
+  #map_tablero_inversion_hidalgo {
+    width: 100vw !important;
+    height: 50vh !important;
+  }
+  #contenedor_historico{
+    all:unset;
+    width: 90vw !important;
+    height:50vh !important;
+    overflow-x:visible !important;
+
+  }
+  #contenedor_historico_canvas{
+    width: 90vw !important;
+    height:40vh !important;
+  }
+  .container,
+  .scroll-container {
+    max-width: 98vw !important;
+    width: 98vw !important;
+    height: auto !important;
+    min-height: 200px !important;
+    padding: 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  .scroll-container {
+    width: 98vw !important;
+    height: 35vh !important;
+    padding-bottom: 60px !important;
+  }
+
+  .legend_seguridad {
+    max-width: 95vw !important;
+  }
+
+  .works-table,
+  #tabla_inversion_municipal {
+    font-size: 14px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .works-table .obra-column {
+    max-width: 60vw !important;
+    font-size: 14px !important;
+  }
+
+  .Titulos_graphs {
+    font-size: medium !important;
+  }
+
+  .fuente_inegi {
+    font-size: xx-small !important;
+  }
 }

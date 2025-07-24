@@ -48,7 +48,8 @@ const grupo_de_poligonos = L.layerGroup([]).addTo(map_h);
 map_h.on('click', (e) => {
     // This click event is guaranteed to fire only if the click was outside of any feature
     municipio_actual = 84; // Reset to default municipality
-    console.log("Clicked Latitude, Longitude:", e.latlng.lat, e.latlng.lng);
+    console.log("Clicked outside of features, resetting municipio_actual to default:", municipio_actual);
+    //console.log("Clicked Latitude, Longitude:", e.latlng.lat, e.latlng.lng);
 
     const rubrosDisponibles = getUniqueRubrosForMunicipio(municipio_actual);
     updateRubrosDropdown(['Todos los rubros'].concat(rubrosDisponibles));
@@ -56,7 +57,7 @@ map_h.on('click', (e) => {
     updateWorksSummary();
     updateWorksTable(document.getElementById('tipo_dropdown').value);
     updateInvTable();
-    info.update(''); // Clear info panel
+    //info.update(''); // Clear info panel
     poligonos_map_h.resetStyle();
 });
 
@@ -150,7 +151,7 @@ function style_ent_h(feature) {
     return {
         fillColor: getColor_h(percent),
         opacity: 1,
-        color: isSelected ? "#667" : 'white',
+        color: isSelected ? "#E8E6E6" : 'white',
         dashArray: isSelected ? '0' : '5',
         fillOpacity: 0.4,
         pane: isSelected ? 'municipioActual' : 'municipios'
@@ -173,8 +174,8 @@ map_h.fitBounds(poligonos_map_h.getBounds());
 function highlightFeature(e) {
     const layer = e.target;
     layer.setStyle({
-        weight: 5,
-        color: '#666',
+        weight: 8,
+        color: '#ffffffff',
         fillOpacity: 0.5
     });
 }
@@ -216,6 +217,7 @@ function click_on_feature(e) {
     updateWorksTable(document.getElementById('tipo_dropdown').value);
     updateInvTable();
     poligonos_map_h.resetStyle(); // Reset style for all polygons
+    //console.log(layer.feature.properties)
     info.update(layer.feature.properties); // Update info panel with selected municipality's data
 }
 
@@ -225,7 +227,7 @@ function click_on_feature(e) {
  */
 function resetHighlight_h(e) {
     poligonos_map_h.resetStyle(e.target); // Reset style for the specific layer
-    info.update(); // Reset info panel to default
+    //info.update(); // Reset info panel to default
 }
 
 /**
@@ -268,6 +270,7 @@ info.onAdd = function (map_h) {
 };
 
 info.update = function (props) {
+    //console.log(props.NOM_MUN)
     this._div.innerHTML = `<h1 style="font-size:large;display:flex;justify-content:center">${props ? (props.NOM_MUN + '<h4>' + 'Municipio Seleccionado' + '</h4>') : ('Selecciona un Municipio' + '<h4>' + 'Se muestra información de Obras de Cobertura Estatal' + '</h4>')}</h1>`;
 };
 
@@ -281,6 +284,16 @@ const controlSearch_h = new L.Control.Search({
     zoom: 12,
     marker: false,
     propertyName: 'NOM_MUN',
+    firstTipSubmit:true,
+    moveToLocation: function(latlng, title, map) {
+        map.setView(latlng, 12);
+        
+        poligonos_map_h.eachLayer(function(layer) {//Lamentablemente es un ciclo de 84 
+            if (layer.feature && layer.feature.properties.NOM_MUN === title) {
+                layer.fireEvent('click'); 
+            }
+        });
+    }
 });
 
 map_h.addControl(controlSearch_h);
