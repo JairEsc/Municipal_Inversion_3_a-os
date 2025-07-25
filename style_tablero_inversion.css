@@ -19,7 +19,7 @@ body {
 #contenedor_historico_canvas{
   height: 28vh;}
 #contenedor_historico_titulo_select{
-width: 50vw;height: 2vh;justify-content: center;padding-bottom: 1vh; background-color: lightgray;
+width: 50vw;height: fit-content;justify-content: center;padding-bottom: 1vh; background-color: lightgray;
 justify-self: center;
 text-align: center;
 }
@@ -219,7 +219,7 @@ border-top: 2px solid rgba(179,142,93,1); /* Borde inferior para las cabeceras *
 .works-table td {
 padding: 10px 15px;
 border-bottom: 1px solid #f0f0f0; /* Línea divisoria suave entre filas */
-vertical-align: top; /* Alinea el texto en la parte superior de la celda */
+vertical-align: middle; /* Alinea el texto en la parte superior de la celda */
 }
 
 /* Estilos para filas pares (para efecto de cebra) */
