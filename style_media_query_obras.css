@@ -23,7 +23,8 @@
     width: 100vw !important;
     height:45vh !important;
     overflow-x:clip !important;
-    overflow-y:scroll !important
+    overflow-y:scroll !important;
+    scroll-snap-align: start;
   }
  
   #contenedor_historico_canvas{
@@ -43,9 +44,12 @@
   #container_horizontal_segunda_mitad{
     overflow-x:  scroll !important;
     width: 100vw !important;
+
+    scroll-snap-type: x mandatory;
         }
   #contenedor_barplot_horizontal{
     width: 100vw !important;
+    scroll-snap-align: start;
     }
     #scroll_de_barplot_tipos{
     width: 100vw !important;
@@ -56,6 +60,7 @@
   #contenedor_meses_titulo_canvas{
     height: 45vh !important;
     width: 100vw !important;
+    scroll-snap-align: start;
   }
   /******************************************/
   .container,
