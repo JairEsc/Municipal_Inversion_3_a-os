@@ -33,7 +33,10 @@
   img.leaflet-control{
     width:35vw !important;
   }
+  .info_tablero_seg.leaflet-control{
+    width: 50vw !important;
 
+  }
 
 
   /******************************************/

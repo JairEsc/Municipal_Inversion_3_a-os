@@ -57,7 +57,7 @@ map_h.on('click', (e) => {
     updateWorksSummary();
     updateWorksTable(document.getElementById('tipo_dropdown').value);
     updateInvTable();
-    //info.update(''); // Clear info panel
+    info.update(''); // Clear info panel
     poligonos_map_h.resetStyle();
 });
 

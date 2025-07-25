@@ -265,3 +265,8 @@ path.stroke-polyline {
 img.leaflet-control{
     width:25vw ;
   }
+.info_tablero_seg.leaflet-control{
+  width: fit-content;
+  justify-self: center;
+  text-align: center;
+}
