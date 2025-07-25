@@ -25,6 +25,7 @@ text-align: center;
 }
 #meses_titulo{
   text-align: center;
+  justify-self: center;
 }
 #Titulos_graphs{
   justify-self: center;
