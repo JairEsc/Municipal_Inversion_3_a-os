@@ -1,0 +1,95 @@
+@media (max-width: 767px) {
+  #primera_mitad {
+    width: 100vw !important;
+    height: 50vh !important;
+  }
+  #contenedor_global {
+    width: 100vw !important;
+    height: 50vh !important;
+    
+    display: block !important;
+  }
+  #segunda_mitad {
+    display: flex !important;
+    width: 300vw !important;
+    height: 47vh !important;
+  }
+  #map_tablero_inversion_hidalgo {
+    width: 100vw !important;
+    height: 50vh !important;
+  }
+  #contenedor_historico{
+    all:unset;
+    width: 100vw !important;
+    height:45vh !important;
+    overflow-x:clip !important;
+    overflow-y:scroll !important
+  }
+ 
+  #contenedor_historico_canvas{
+    width: 100vw !important;
+    height:40vh !important;
+  }
+  img.leaflet-control{
+    width:35vw !important;
+  }
+
+
+
+  /******************************************/
+  #container_horizontal_segunda_mitad{
+    overflow-x:  scroll !important;
+    width: 100vw !important;
+        }
+  #contenedor_barplot_horizontal{
+    width: 100vw !important;
+    }
+    #scroll_de_barplot_tipos{
+    width: 100vw !important;
+    height: 45vh !important;
+    }
+
+  /******************************************/
+  #contenedor_meses_titulo_canvas{
+    height: 45vh !important;
+    width: 100vw !important;
+  }
+  /******************************************/
+  .container,
+  .scroll-container {
+    max-width: 98vw !important;
+    width: 98vw !important;
+    height: auto !important;
+    min-height: 200px !important;
+    box-sizing: border-box !important;
+  }
+
+  .scroll-container {
+    width: 98vw !important;
+    height: 35vh !important;
+  }
+
+  .legend_seguridad {
+    max-width: 95vw !important;
+  }
+
+  .works-table,
+  #tabla_inversion_municipal {
+    font-size: 14px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .works-table .obra-column {
+    max-width: 60vw !important;
+    font-size: 14px !important;
+  }
+
+  .Titulos_graphs {
+    font-size: medium !important;
+  }
+
+  .fuente_inegi {
+    font-size: xx-small !important;
+  }
+}

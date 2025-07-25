@@ -7,29 +7,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Obras SIPDUS: Municipal</title>
     <link rel="stylesheet" href="style_tablero_inversion.css">
+    <link rel="stylesheet" href="style_media_query_obras.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-        <script src="https://unpkg.com/leaflet-search@2.3.7/dist/leaflet-search.src.js"></script>
+    <script src="https://unpkg.com/leaflet-search@2.3.7/dist/leaflet-search.src.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-search@2.3.7/dist/leaflet-search.src.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.js"></script>
 
 </head>
 
 <body>
-    
+
     <div id="contenedor_global" style="display: flex;">
         <div id="primera_mitad"
-            style="width: 50vw;height: 100vh;display: inline-block;background-color: rgba(112, 114, 114,0.9);">
+            >
 
             <div id="map_tablero_inversion_hidalgo" class="mapa_web_inversion" style="float: right;display: block;">
                 <script src="Datos/geojson_hgo.js"></script>
                 <script>
-                    
+
                 </script>
                 <script src="asincronas.js">
 
@@ -37,115 +39,114 @@
                 <script src="app.js"></script>
             </div>
         </div>
-        <div id="segunda_mitad" style="height: 100vh; width: 50vw;display: block;">
-
-            <div id="contenedor_historico" class=""
-                style="width: 50vw;height: 30vh;overflow-y: scroll;overflow-x: hidden;">
-
-                <div id="contenedor_historico_titulo_select"
-                    style="width: 50vw;height: 2vh;display: flex;justify-content: center;padding-bottom: 1vh; background-color: lightgray;">
-
-                    <p class="Titulos_graphs">Número de obras por ejercicio</p>
-
-                </div>
-                <div id="contenedor_historico_canvas" style="height: 28vh;">
-                    <canvas class="canva_de_chartjs" id="lineplot_año_por_tipo_estatal"
-                        style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 40vh;display: block;"></canvas>
-
-                    <div class="container" id="worksSummary">
-                        <p class="no-data">Selecciona un municipio en el mapa para ver el resumen de obras.</p>
+        <div id='container_horizontal_segunda_mitad'>
+            <div id="segunda_mitad" >
+    
+                <div id="contenedor_historico" class=""
+                    >
+    
+                    <div id="contenedor_historico_titulo_select"
+                        >
+    
+                        <p class="Titulos_graphs">Número de obras por ejercicio</p>
+    
                     </div>
-                    <!-- <canvas class="canva_de_chartjs"  id="lineplot_año_por_tipo_municipal"  style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 40vh;display: none;"></canvas> -->
+                    <div id="contenedor_historico_canvas">
+                        <canvas class="canva_de_chartjs" id="lineplot_año_por_tipo_estatal"
+                            ></canvas>
+    
+                        <div class="container" id="worksSummary">
+                            <p class="no-data">Selecciona un municipio en el mapa para ver el resumen de obras.</p>
+                        </div>
+                        <!-- <canvas class="canva_de_chartjs"  id="lineplot_año_por_tipo_municipal"  style="margin-left: 0.5vw; margin-right: 0.5vw; width: 49vw;height: 40vh;display: none;"></canvas> -->
+                    </div>
+    
                 </div>
-
-            </div>
-
-            <div id="contenedor_barplot_horizontal"
-                style="height: 40vh;width: 50vw;;background-color: rgb(255, 255, 255)">
-                <div id="contenedor_barplot_horizontal_titulo_select"
-                    style="width: 50vw;height: 2vh;display: flex;justify-content: center;background-color: rgb(255, 255, 255);">
-                    <p class="Titulos_graphs">Rubro: </p>
-                    <select style="position: relative;height: 2vh;margin-left: 0.5vw;display: block;"
-                        id="tipo_dropdown">
-                        <option value="Espacios Públicos">Sin seleccionar</option>
-
-                    </select>
+    
+                <div id="contenedor_barplot_horizontal">
+                    <div id="contenedor_barplot_horizontal_titulo_select">
+                        <p class="Titulos_graphs">Rubro: </p>
+                        <select style="position: relative;height: 2vh;margin-left: 0.5vw;display: block;"
+                            id="tipo_dropdown">
+                            <option value="Espacios Públicos">Sin seleccionar</option>
+                        </select>
+                    </div>
+    
+                    <div id="scroll_de_barplot_tipos" class="" >
+                        <table id="tabla_obras_municipal" class="works-table">
+                            <thead>
+                                <tr>
+                                    <th>Año</th>
+                                    <th>Inversión</th>
+                                    <th>Beneficiarios</th>
+                                    <th id="obra_column_id" style="text-align: center;">
+                                        Obra
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Las filas de la tabla se insertarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                        <p class="no-data" id="noDataMessage" style="display: none;">No hay obras registradas para este
+                            municipio.</p>
+                    </div>
+    
+    
+    
                 </div>
-
-                <div id="scroll_de_barplot_tipos" class="" style="width: 50vw;height: 38vh;overflow-y: scroll;">
-                    <table id="tabla_obras_municipal" class="works-table">
+                <div id="contenedor_meses_titulo_canvas" class="blabla"
+                    >
+                    <div id="meses_titulo" style="width: 50vw;height: 2vh;display: block;">
+                        <p class="Titulos_graphs" style="text-align: center;">Inversión Histórica</p>
+                    </div>
+                    <table id="tabla_inversion_municipal" class="works-table">
                         <thead>
                             <tr>
                                 <th>Año</th>
+                                <th>Obras</th>
                                 <th>Inversión</th>
-                                <th>Beneficiarios</th>
-                                <th id="obra_column_id" style="text-align: center;">
-                                    Obra
-                                </th>
                             </tr>
                         </thead>
                         <tbody>
                             <!-- Las filas de la tabla se insertarán aquí dinámicamente -->
                         </tbody>
                     </table>
-                    <p class="no-data" id="noDataMessage" style="display: none;">No hay obras registradas para este
+                    <p class="no-data" id="noDataMessage2" style="display: none;">No hay obras registradas para este
                         municipio.</p>
                 </div>
-
-
-
             </div>
-            <div id="contenedor_meses_titulo_canvas" class="blabla"
-                style="width: 48vw;height: 30vh;overflow-y: scroll;overflow-x: hidden;">
-                <div id="meses_titulo" style="width: 50vw;height: 2vh;display: block;">
-                    <p class="Titulos_graphs" style="text-align: center;">Inversión Histórica</p>
-                </div>
-                <table id="tabla_inversion_municipal" class="works-table">
-                    <thead>
-                        <tr>
-                            <th>Año</th>
-                            <th>Obras</th>
-                            <th>Inversión</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Las filas de la tabla se insertarán aquí dinámicamente -->
-                    </tbody>
-                </table>
-                <p class="no-data" id="noDataMessage2" style="display: none;">No hay obras registradas para este
-                    municipio.</p>
-            </div>
+
         </div>
-        <script src="script_tablero_inversion_municipal.js"></script>
-        <script src="script_actualizar_charts.js"></script>
-        <script src="Datos/sipdus_mixed.js"></script>
-        <script>
-           
-                function waitForObrasAndSimulateClick() {
-                    if (typeof obras_from_js !== "undefined" && document.getElementById("obra_column_id").children.length === 0) {
-                        // Simulate a click in map_h, a Leaflet map at coordinates -98.0423, 20.4642
-                        const latlng = L.latLng(20.4642, -98.0423);
-                        console.log("click");
-                        map_h.fire('click', {
-                            latlng: latlng,
-                            layerPoint: map_h.latLngToLayerPoint(latlng),
-                            containerPoint: map_h.latLngToContainerPoint(latlng),
-                            originalEvent: null
-                        });
-                    } else {
-                        setTimeout(waitForObrasAndSimulateClick, 100); // Check again in 100ms
-                    }
-                }
-                waitForObrasAndSimulateClick();
-            
-            //Smula un click
-        </script>
-        <script>
-            
-        </script>
-
 
     </div>
+    <script src="script_tablero_inversion_municipal.js"></script>
+    <script src="script_actualizar_charts.js"></script>
+    <script src="Datos/sipdus_mixed.js"></script>
+    <script>
+
+        function waitForObrasAndSimulateClick() {
+            if (typeof obras_from_js !== "undefined" && document.getElementById("obra_column_id").children.length === 0) {
+                // Simulate a click in map_h, a Leaflet map at coordinates -98.0423, 20.4642
+                const latlng = L.latLng(20.4642, -98.0423);
+                console.log("click");
+                map_h.fire('click', {
+                    latlng: latlng,
+                    layerPoint: map_h.latLngToLayerPoint(latlng),
+                    containerPoint: map_h.latLngToContainerPoint(latlng),
+                    originalEvent: null
+                });
+            } else {
+                setTimeout(waitForObrasAndSimulateClick, 100); // Check again in 100ms
+            }
+        }
+        waitForObrasAndSimulateClick();
+
+        //Smula un click
+    </script>
+    <script>
+
+    </script>
 
 
 
