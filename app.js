@@ -178,6 +178,10 @@ function highlightFeature(e) {
         color: '#ffffffff',
         fillOpacity: 0.5
     });
+
+    setTimeout(() => {
+        layer.closeTooltip();
+    }, 2000);
 }
 
 /**
