@@ -43,9 +43,10 @@ const grupo_de_markers = L.layerGroup([]).addTo(map_h);
 const grupo_de_lineas = L.layerGroup([]).addTo(map_h);
 const grupo_de_poligonos = L.layerGroup([]).addTo(map_h);
 
-
+layerGroup = L.layerGroup([]).addTo(map_h); 
 // Handle map click outside of features
 map_h.on('click', (e) => {
+    layerGroup.clearLayers(); 
     // This click event is guaranteed to fire only if the click was outside of any feature
     municipio_actual = 84; // Reset to default municipality
     console.log("Clicked outside of features, resetting municipio_actual to default:", municipio_actual);
@@ -282,25 +283,272 @@ info.addTo(map_h);
 
 // Search control
 const controlSearch_h = new L.Control.Search({
-    position: 'topleft',
-    layer: poligonos_map_h,
-    initial: false,
-    zoom: 12,
-    marker: false,
-    propertyName: 'NOM_MUN',
-    firstTipSubmit:true,
-    moveToLocation: function(latlng, title, map) {
-        map.setView(latlng, 12);
+        position: 'topleft',
+        layer: poligonos_map_h, // Searching an already added layer
+        initial: false,
+        zoom: 12,
+        marker: false,
+        propertyName: 'NOM_MUN',
+        firstTipSubmit: true,
+        moveToLocation: function(latlng, title, map) {
+            map.setView(latlng, 12);
+            poligonos_map_h.eachLayer(function(layer) {
+                if (layer.feature && layer.feature.properties.NOM_MUN === title) {
+                    layer.fireEvent('click');
+                    // Optional: Highlight the found polygon
+                    layer.setStyle({ color: 'red', weight: 4 });
+                    layer.once('mouseout', function() {
+                        poligonos_map_h.resetStyle(layer); // Reset style on mouseout
+                    });
+                } else {
+                    poligonos_map_h.resetStyle(layer); // Reset other layers' styles
+                }
+            });
+        }
+    });
+    map_h.addControl(controlSearch_h);
+
+    // --- Buscador de Features/Obras (Posición "Top" Centrada) ---
+    // We need a dummy layer for the search control to index.
+    // This layer itself will NOT be added to the map directly for display.
+    
+
+    // Add the centered search control to the map
+    // The timeout ensures all data is conceptually ready.
+    setTimeout(() => {
+        // Create the control with input and button
+        const myControl = L.control({ position: 'bottomright' });
+        myControl.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'myControl');
+            this._div.innerHTML = `
+                <input type="text" id="searchInputObras" placeholder="Buscador de Obras" style="width: 180px;"/>
+                <button id="searchObrasBtn" style="margin-left: 5px;">Buscar</button>
+            `;
+            return this._div;
+        };
+        myControl.addTo(map_h);
+
+        // Functions to disable/enable map dragging
+        function controlEnter(e) {
+        }
+        function controlLeave() {
+            map_h.dragging.enable();
+        }
+        document.getElementsByClassName("myControl")[0].onmouseover = controlEnter;
+        document.getElementsByClassName("myControl")[0].onmouseout = controlLeave;
+
+        // Event listeners for input and button
+        const input = document.getElementById('searchInputObras');
+        const button = document.getElementById('searchObrasBtn');
         
-        poligonos_map_h.eachLayer(function(layer) {//Lamentablemente es un ciclo de 84 
-            if (layer.feature && layer.feature.properties.NOM_MUN === title) {
-                layer.fireEvent('click'); 
+        function NoTildes(texto) {
+            return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+        function generar_marker_dado_color(color_en_hex) {
+            return L.divIcon({
+                iconSize: [12, 12],
+                iconAnchor: [9, 12],
+                style: "",
+                html: `<svg style="margin-left: -6px;margin-top: -6px;" width="28" height="41" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><linearGradient id="b"><stop stop-color="#2e6c97" offset="0"/><stop stop-color="#3883b7" offset="1"/></linearGradient><linearGradient id="a"><stop stop-color="#126fc6" offset="0"/><stop stop-color="#4c9cd1" offset="1"/></linearGradient><linearGradient y2="-0.004651" x2="0.498125" y1="0.971494" x1="0.498125" id="c" xlink:href="#a"/><linearGradient y2="-0.004651" x2="0.415917" y1="0.490437" x1="0.415917" id="d" xlink:href="#b"/></defs><g><title>Layer 1</title><rect id="svg_1" fill="#fff" width="12.625" height="14.5" x="411.279" y="508.575"/><path stroke=${color_en_hex} id="svg_2" stroke-linecap="round" stroke-width="1.1" fill=${color_en_hex} d="m14.095833,1.55c-6.846875,0 -12.545833,5.691 -12.545833,11.866c0,2.778 1.629167,6.308 2.80625,8.746l9.69375,17.872l9.647916,-17.872c1.177083,-2.438 2.852083,-5.791 2.852083,-8.746c0,-6.175 -5.607291,-11.866 -12.454166,-11.866zm0,7.155c2.691667,0.017 4.873958,2.122 4.873958,4.71s-2.182292,4.663 -4.873958,4.679c-2.691667,-0.017 -4.873958,-2.09 -4.873958,-4.679c0,-2.588 2.182292,-4.693 4.873958,-4.71z"/><path id="svg_3" fill="none" stroke-opacity="0.122" stroke-linecap="round" stroke-width="1.1" stroke="#fff" d="m347.488007,453.719c-5.944,0 -10.938,5.219 -10.938,10.75c0,2.359 1.443,5.832 2.563,8.25l0.031,0.031l8.313,15.969l8.25,-15.969l0.031,-0.031c1.135,-2.448 2.625,-5.706 2.625,-8.25c0,-5.538 -4.931,-10.75 -10.875,-10.75zm0,4.969c3.168,0.021 5.781,2.601 5.781,5.781c0,3.18 -2.613,5.761 -5.781,5.781c-3.168,-0.02 -5.75,-2.61 -5.75,-5.781c0,-3.172 2.582,-5.761 5.75,-5.781z"/></g></svg>`,
+            });
+        }
+        function filtrarObras(e){
+            if(e.value.trim() === '' || e.value.length < 3) {
+                return []
+            }
+            const patron = e.value.toLowerCase().trim();
+            const palabras = patron.split(/\s+/); 
+            const seenKeys = new Set();
+            const filteredFeatures = [];
+
+            for (const feature of obras_from_js.features) {
+                const obraTexto = NoTildes(feature.properties.Obra.toLowerCase());
+                const coincide = palabras.every(palabra => obraTexto.includes(NoTildes(palabra)));
+
+                if (coincide && feature.geometry.type!='Polygon' && feature.geometry.type!='MultiPolygon') {
+                    const key = feature.properties.Obra;
+                    if (!seenKeys.has(key)) {
+                        seenKeys.add(key);
+                        filteredFeatures.push(feature);
+                    }
+                }
+            }
+
+            const filteredGeoJSON = {
+                "type": "FeatureCollection",
+                "features": filteredFeatures
+            };
+            layerGroup.clearLayers(); // Elimina lo anterior del mapa
+            L.geoJSON(filteredGeoJSON, {
+                pointToLayer: function (feature, latlng) {
+                    let color_mrkr;
+                    switch (feature.properties.Rubro) {
+                        case "Vialidades Urbanas":
+                            color_mrkr = "#98989A";
+                            break;
+                        case "Espacios Públicos":
+                            color_mrkr = "#235B4E";
+                            break;
+                        case "Infraestructura Carretera":
+                            color_mrkr = "#6F7271";
+                            break;
+                        case "Infraestructura Hídrica":
+                            color_mrkr = "#6c9abb";
+                            break;
+                        case "Vivienda Asequible":
+                            color_mrkr = "#d4c19c";
+                            break;
+                        case "Espacios Educativos":
+                            color_mrkr = "#9d2449";
+                            break;
+                        default:
+                            color_mrkr = "#666"; // Fallback
+                            break;
+                    }
+
+                    return L.marker(latlng, {
+                        icon: generar_marker_dado_color(color_mrkr)
+                    });
+                },
+
+                onEachFeature: function (feature, layer) {
+                    if (feature.properties && feature.properties.Obra) {
+                        layer.bindPopup(`<strong>Obra:</strong><br>${feature.properties.Obra}`);
+                    }                
+                },
+                style: function (feature) {
+                    let color_custom;
+                    switch (feature.geometry.type) {
+                    case "MultiPolygon":
+                        switch (feature.properties.Rubro) {
+                            case "Vialidades Urbanas":
+                            color_custom = "#98989A";
+                            break;
+                            case "Espacios Públicos":
+                            color_custom = "#235B4E";
+                            break;
+                            case "Infraestructura Carretera":
+                            color_custom = "#6F7271";
+                            break;
+                            case "Infraestructura Hídrica":
+                            color_custom = "#6c9abb";
+                            break;
+                            case "Vivienda Asequible":
+                            color_custom = "#d4c19c";
+                            break;
+                            case "Espacios Educativos":
+                            color_custom = "#9d2449";
+                            break;
+                            default:
+                            color_custom = "url(#c)";
+                            break;
+                        }
+                        return { color: "black", fillColor: color_custom, fillOpacity: 0.5 };
+                    case "Polygon":
+                        switch (feature.properties.Rubro) {
+                            case "Vialidades Urbanas":
+                            color_custom = "#98989A";
+                            break;
+                            case "Espacios Públicos":
+                            color_custom = "#235B4E";
+                            break;
+                            case "Infraestructura Carretera":
+                            color_custom = "#6F7271";
+                            break;
+                            case "Infraestructura Hídrica":
+                            color_custom = "#6c9abb";
+                            break;
+                            case "Vivienda Asequible":
+                            color_custom = "#d4c19c";
+                            break;
+                            case "Espacios Educativos":
+                            color_custom = "#9d2449";
+                            break;
+                            default:
+                            color_custom = "url(#c)";
+                            break;
+                        }
+                        return { color: "black", fillColor: color_custom, fillOpacity: 0.5 };
+                    case "LineString":
+                        switch (feature.properties.Rubro) {
+                            case "Vialidades Urbanas":
+                            color_custom = "#98989A";
+                            break;
+                            case "Espacios Públicos":
+                            color_custom = "#235B4E";
+                            break;
+                            case "Infraestructura Carretera":
+                            color_custom = "#6F7271";
+                            break;
+                            case "Infraestructura Hídrica":
+                            color_custom = "#6c9abb";
+                            break;
+                            case "Vivienda Asequible":
+                            color_custom = "#d4c19c";
+                            break;
+                            case "Espacios Educativos":
+                            color_custom = "#9d2449";
+                            break;
+                            default:
+                            color_custom = "url(#c)";
+                            break;
+                        }
+                        return { color: color_custom };
+                    case "MultiLineString":
+                        switch (feature.properties.Rubro) {
+                            case "Vialidades Urbanas":
+                            color_custom = "#98989A";
+                            break;
+                            case "Espacios Públicos":
+                            color_custom = "#235B4E";
+                            break;
+                            case "Infraestructura Carretera":
+                            color_custom = "#6F7271";
+                            break;
+                            case "Infraestructura Hídrica":
+                            color_custom = "#6c9abb";
+                            break;
+                            case "Vivienda Asequible":
+                            color_custom = "#d4c19c";
+                            break;
+                            case "Espacios Educativos":
+                            color_custom = "#9d2449";
+                            break;
+                            default:
+                            color_custom = "url(#c)";
+                            break;
+                        }
+                        return { color: color_custom };
+                    default:
+                        return {};
+                    }
+                },
+            }).addTo(layerGroup);
+
+            
+        }
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                console.log('Obras search input:', input.value);
+                filtrarObras(input)
             }
         });
-    }
-});
+        input.addEventListener('click',function(e){
+            L.DomEvent.stopPropagation(e);
+        });
+        button.addEventListener('click', function (e) {
+            L.DomEvent.stopPropagation(e);
+            console.log('Obras search input:', input.value);
+            filtrarObras(input)
+        });
 
-map_h.addControl(controlSearch_h);
+        // Evita que el doble click en el textbox interactúe con el mapa
+        input.addEventListener('dblclick', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+        });
+    }, 500);
+
 
 // Legend control
 const legend_h = L.control({ position: 'bottomright' });

@@ -218,6 +218,7 @@ border-top: 2px solid rgba(179,142,93,1); /* Borde inferior para las cabeceras *
 
 /* Estilos para las celdas de la tabla */
 .works-table td {
+  
 padding: 10px 15px;
 border-bottom: 1px solid #f0f0f0; /* Línea divisoria suave entre filas */
 vertical-align: middle; /* Alinea el texto en la parte superior de la celda */
@@ -231,6 +232,10 @@ background-color: #f9f9f9; /* Color más claro para filas pares */
 /* Estilos para filas al pasar el ratón */
 .works-table tbody tr:hover {
 background-color: #e8e8e8; /* Resaltar fila al pasar el ratón */
+transition: background-color 0.3s ease;
+}
+.highlighted-row{
+  background-color:rgb(232, 232, 232); /* Resaltar fila al pasar el ratón */
 transition: background-color 0.3s ease;
 }
 

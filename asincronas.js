@@ -120,8 +120,27 @@ function buscarYAbrirPopup(feat, textoBuscado) {
     });
   }
 }
+function resaltarEnTabla(){
+  console.log("Se está resaltando")
+  const obras_texts = document.getElementsByClassName('obra-text');
+  let matchedRow = null;
+  for (let i = 0; i < obras_texts.length; i++) {
+    if (obras_texts[i].textContent === this._popup._content) {
+      matchedRow = obras_texts[i].closest('tr');
+      break;
+    }
+  }
+  if (matchedRow) {
+    
+    matchedRow.classList.add('highlighted-row');
+    console.log("Matched table row:", matchedRow);
+    matchedRow.scrollIntoView(
+      {block: "center", behavior: "smooth"}
+    );
+    setTimeout(() => {matchedRow.classList.remove('highlighted-row')},3000)
 
-// --- Geometry Handlers (as discussed previously) ---
+  }  
+}
 const geometryHandlers = {
   Point: function (feat, color_custom) {
     const originalLat = feat.geometry.coordinates[1];
@@ -145,12 +164,13 @@ const geometryHandlers = {
       finalLat += normalRandom(0, stdDev);
       finalLng += normalRandom(0, stdDev);
     }
-
-    grupo_de_markers.addLayer(
-      L.marker(L.latLng(finalLat, finalLng), {
+    const markerSingle=L.marker(L.latLng(finalLat, finalLng), {
         icon: generar_marker_dado_color(color_custom),
       }).bindPopup(feat.properties["Obra"])
-    );
+      markerSingle.addEventListener("click", resaltarEnTabla)
+      grupo_de_markers.addLayer(
+        markerSingle
+      );
   },
   MultiPoint: function (feat, color_custom) {
     feat.geometry.coordinates.forEach((feat_c) => {
@@ -170,7 +190,7 @@ const geometryHandlers = {
       grupo_de_markers.addLayer(
         L.marker(L.latLng(finalLat, finalLng), {
           icon: generar_marker_dado_color(color_custom),
-        }).bindPopup(feat.properties["Obra"])
+        }).bindPopup(feat.properties["Obra"]).on("click", resaltarEnTabla)
       );
     });
   },
@@ -190,11 +210,7 @@ const geometryHandlers = {
 
     grupo_de_lineas.addLayer(polyline);
 
-    polyline.on("click", function (e) {
-      L.DomEvent.stopPropagation(e);
-      this.openPopup();
-      this.bringToFront();
-    });
+    polyline.on("click", resaltarEnTabla());
   },
   // Función para manejar geometrías de tipo MultiLineString
   MultiLineString: function (feat, color_custom) {
@@ -207,7 +223,7 @@ const geometryHandlers = {
           opacity: 1,
         }
       );
-
+      polyline.on("click", resaltarEnTabla);
       const decorated_polyline = L.polylineDecorator(polyline, {
         patterns: [
           // defines a pattern of 10px-wide dashes, repeated every 20px on the line
@@ -225,7 +241,7 @@ const geometryHandlers = {
         ],
       });
       decorated_polyline.bindPopup(feat.properties["Obra"]); // Asociar el popup
-      console.log("Decorated polyline:", decorated_polyline);
+      //console.log("Decorated polyline:", decorated_polyline);
       grupo_de_lineas.addLayer(decorated_polyline); // Agregar al grupo de capas
 
       // Traer la línea al frente y abrir popup al hacer clic
@@ -233,6 +249,7 @@ const geometryHandlers = {
         this.openPopup(); // Abrir el popup al hacer clic
         this.bringToFront(); // Traer la línea al frente al hacer clic
       });
+      decorated_polyline.on("click", resaltarEnTabla);
     });
   },
   Polygon: function (feat) {
