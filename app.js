@@ -60,6 +60,7 @@ map_h.on('click', (e) => {
     updateInvTable();
     info.update(''); // Clear info panel
     poligonos_map_h.resetStyle();
+    document.getElementById('searchInputObras').value=''
 });
 
 // Array of municipality names
