@@ -52,11 +52,11 @@ kml_keneth=puntos_kenn |>
 #unzip(zipfile ="../Ocultos/Georeferenciados_a_mano/Sipdus_Kenneth.kmz" ,exdir = "../Ocultos/Georeferenciados_a_mano/Nueva carpeta/Keneth.kml")
 #"../Ocultos/Georeferenciados_a_mano/Nueva carpeta/Keneth.kml/doc.kml" |> st_read() |> nrow()
 kmls=list.files(path = "../Ocultos/Georeferenciados_a_mano/",pattern = ".kml$",full.names = T,recursive = T) |> 
-  lapply(st_read) 
+  lapply(st_read)
 
 kmls=do.call(plyr::rbind.fill,kmls)
 kmls=kmls |> 
-  dplyr::select(-Description) 
+  dplyr::select(-Description)
 
 kmls=merge(kmls,docs_sheets,by.x ='Name',by.y='ID_OBRA',all.x=T) ##En este merge se pueden duplicar por los que agregarmos en
 #localidad_encontrada (un mismo renglón se divide en varios porque la obra tenía más información)

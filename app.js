@@ -277,7 +277,7 @@ info.onAdd = function (map_h) {
 
 info.update = function (props) {
     //console.log(props.NOM_MUN)
-    this._div.innerHTML = `<h1 style="font-size:large;display:flex;justify-content:center">${props ? (props.NOM_MUN + '<h4>' + 'Municipio Seleccionado' + '</h4>') : ('Selecciona un Municipio' + '<h4>' + 'Se muestra información de Obras de Cobertura Estatal' + '</h4>')}</h1>`;
+    this._div.innerHTML = `<h1 style="font-size:large;display:flex;justify-content:center;margin:5px">${props ? (props.NOM_MUN + '<h4>' + 'Municipio Seleccionado' + '</h4>') : ('Selecciona un Municipio' + '<h4>' + 'Se muestra información de Obras de Cobertura Estatal' + '</h4>')}</h1>`;
 };
 
 info.addTo(map_h);
