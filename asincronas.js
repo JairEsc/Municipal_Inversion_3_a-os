@@ -396,7 +396,7 @@ function updateWorksTable(rubro_sel) {
         maximumFractionDigits: 0,
       }).format(parseFloat(work.Inversión) || 0); // Ensure Inversión is a number
 
-      row.insertCell().textContent = formattedInvestment;
+      //row.insertCell().textContent = formattedInvestment;
       row.insertCell().textContent =
         work["NOM_MUN"] === "Cobertura Estatal"
           ? "Cobertura Estatal"
@@ -483,28 +483,22 @@ function updateWorksTable(rubro_sel) {
   }
 }
 
-// --- Global variables that need to be defined somewhere before this function is called ---
-// Example:
-// var map_h; // Your Leaflet map instance
-// var grupo_de_markers; // L.layerGroup()
-// var grupo_de_lineas;  // L.layerGroup()
-// var grupo_de_poligonos; // L.layerGroup()
-// var municipios; // An object/array mapping indices to municipality names
-// var municipio_actual; // Current selected municipality index/name
-// var obras_from_js; // Your GeoJSON data loaded via fetch
-// var generar_marker_dado_color; // Your function to generate markers based on color
 
 function updateInvTable() {
   const tableBody = document.querySelector("#tabla_inversion_municipal tbody");
   const noDataMessage = document.getElementById("noDataMessage2");
   // Assuming generate_resumen_inversion_por_año returns an object like { 2022: { obrasTotal: ..., inversionTotal: ... }, ... }
   const worksData = generate_resumen_inversion_por_año(municipio_actual);
-  console.log(worksData);
-
+  res_inv_from_geojson=hidalgo.features.filter((feat) => {
+    return (
+      feat.properties.NOM_MUN === municipios[municipio_actual])});
+  console.log("Resumen de inversión por año:", res_inv_from_geojson);
+  console.log("Resumen de inversión por año:", worksData);
   tableBody.innerHTML = "";
-
+  
   const years = Object.keys(worksData).sort((a, b) => b - a);
-
+  
+  
   if (years.length === 0) {
     noDataMessage.style.display = "block"; // Show no data message
     document.getElementById("tabla_inversion_municipal").style.display = "none"; // Hide table
@@ -517,7 +511,14 @@ function updateInvTable() {
     let totalInversionHistorico = 0;
 
     years.forEach((year) => {
-      const yearSummary = worksData[year];
+      var yearSummary = worksData[year];
+      if(municipio_actual==84){
+        console.log("Año sin inversión en geojson:",year)
+        yearSummary['inversionTotal']=hidalgo.features.reduce((acc,curr)=>{
+          return acc + curr.properties[`Inversion_${year}`];
+        },0)
+      }
+      else{yearSummary['inversionTotal']=res_inv_from_geojson[0].properties[`Inversion_${year}`]}
       totalObrasHistorico += yearSummary.obrasTotal;
       totalInversionHistorico += yearSummary.inversionTotal;
 
@@ -531,9 +532,9 @@ function updateInvTable() {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       }).format(yearSummary.inversionTotal);
-      row.insertCell().textContent = formattedInvestment;
+      //row.insertCell().textContent = formattedInvestment;
+      console.log("Año:", year, "Resumen:", yearSummary);
     });
-
     const totalRow = tableBody.insertRow();
     totalRow.classList.add("total-row");
 
@@ -545,7 +546,7 @@ function updateInvTable() {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(totalInversionHistorico);
-    totalRow.insertCell().textContent = formattedTotalInvestment; // Suma total de inversión
+    //totalRow.insertCell().textContent = formattedTotalInvestment; // Suma total de inversión
     // --- Fin del renglón del total histórico ---
   }
 }

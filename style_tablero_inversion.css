@@ -241,7 +241,7 @@ transition: background-color 0.3s ease;
 
 /* Estilo específico para la columna 'Obra' para manejar texto largo */
 .works-table .obra-column {
-max-width: 20vw; /* Limita el ancho de la columna de obra */
+max-width: 30vw; /* Limita el ancho de la columna de obra */
 word-wrap: break-word; /* Permite que el texto se rompa y se ajuste */
 overflow-wrap: break-word; /* Otra propiedad para asegurar el ajuste */
 display: flex;
