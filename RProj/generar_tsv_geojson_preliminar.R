@@ -76,16 +76,19 @@ obras_ya_util_tiene_geo |> dplyr::filter(!st_is_empty(geometry)) |>
 
 
 
+obras_=sf::st_read("../Ocultos/Obras_SIPDUS_Georeferenciacion_Manual_2025 .geojson")
 
-
-
-
+obras__=obras_ |> dplyr::select(Clave_de_obra,Periodo,Subclasificación:Rubro,Ejercicio,Obra,Municipio_Original,Localidad_Original,Inversión,Habitantes_Beneficiados,Ejecutora) |> 
+  sf::st_drop_geometry() |> 
+  dplyr::filter(Municipio_Original=='Tepeji del Río de Ocampo')
+obras__ |> dplyr::rename(Municipio=Municipio_Original) |> 
+  dplyr::rename(Localidad=Localidad_Original) |> openxlsx::write.xlsx("../../../obras_Tepeji del Río de Ocampo.xlsx")
 
 ############################################################
 ############################################################
 ############################################################
 
-zzz=st_read("../Datos/sipdus_geometrias.geojson")
+zzz=sf::st_read("../Datos/sipdus_geometrias.geojson")
 xx=readxl::read_excel("../RProj/SIPDUS_Municipios_2022-2025.xlsx")
 xx=xx |> 
   dplyr::select(Municipio_ind:Trabajos,-Municipio_ind) |> 
